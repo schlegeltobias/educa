@@ -46,7 +46,7 @@ body {
     stroke-width: 4px;
 }
 
-.link_tree {
+.ech_link_tree {
     fill: none;
     stroke: #ccc4c2;
     stroke-width: 2px;
@@ -8846,12 +8846,12 @@ function update(source) {
 	  .style("fill-opacity", 1e-6);
 
   // Update the links…
-  var link = svg.selectAll("path.link_tree")
+  var link = svg.selectAll("path")
 	  .data(links, function(d) { return d.target.id; });
 
   // Enter any new links at the parent's previous position.
   link.enter().insert("path", "g")
-	  .attr("class", "link_tree")
+	  .attr("class", "ech_link_tree")
 	  .attr("d", function(d) {
 		var o = {x: source.x0, y: source.y0};
 		return diagonal({source: o, target: o});
@@ -8859,11 +8859,13 @@ function update(source) {
 
   // Transition links to their new position.
   link.transition()
-	  .duration(duration)
-	  .attr("d", diagonal);
+        .attr("class", "ech_link_tree")
+	    .duration(duration)
+	    .attr("d", diagonal);
 
   // Transition exiting nodes to the parent's new position.
   link.exit().transition()
+      .attr("class", "ech_link_tree")
 	  .duration(duration)
 	  .attr("d", function(d) {
 		var o = {x: source.x, y: source.y};
