@@ -47,8 +47,8 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody().strength(-280))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-d3.json("vc_glossary.json", function(error, graph) {
-//d3.json("https://raw.githubusercontent.com/schlegeltobias/educa/main/vc_glossary.json", function(error, graph) {
+//d3.json("vc_glossary.json", function(error, graph) {
+d3.json("https://raw.githubusercontent.com/schlegeltobias/educa/main/vc_glossary.json", function(error, graph) {
   if (error) throw error;
 
 // set random seed
