@@ -3,22 +3,35 @@
 <style>
 
 .links line {
-  stroke: #529c9a;
+  stroke: #ff0f48;
   stroke-opacity: 0.5;
 }
 
 .nodes circle {
-
   stroke-width: 2px;
 }
 
 text {
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 14px;
 }
 
+.tooltip {
+  position: absolute;
+  background-color: #c69e8e;
+  text-align: left;
+  padding: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  border: 0px solid black;
+  max-width: 200px;
+  z-index: 1;
+}
+
+
 </style>
 <svg width="1000" height="1000"></svg>
+<div id="glossary_tooltip"></div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src=//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js></script>
 <script>
@@ -34,7 +47,8 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody().strength(-280))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-d3.json("https://raw.githubusercontent.com/schlegeltobias/educa/main/vc_glossary.json", function(error, graph) {
+d3.json("vc_glossary.json", function(error, graph) {
+//d3.json("https://raw.githubusercontent.com/schlegeltobias/educa/main/vc_glossary.json", function(error, graph) {
   if (error) throw error;
 
 // set random seed
@@ -55,8 +69,8 @@ Math.seedrandom('mySeed');
 
   var circles = node.append("circle")
     .attr("r", 20)
-    .attr("fill", "rgb(44,66,98)")
-    .style("stroke", "rgb(16,26,58)");
+    .attr("fill", "rgb(205,0,58)")
+    .style("stroke", "rgb(148,10,45)");
     //.attr("fill", function(d) { return color(d.group); });
 
 
@@ -74,10 +88,35 @@ Math.seedrandom('mySeed');
       })
       .attr('x', function(d){ return d.xlabel})
       .attr('y', function(d){ return d.ylabel});
-
+/*
   node.append("title")
       .attr("class", "tooltip")
-      .text(function(d) { return d.explanation; });
+      .text(function(d) { return d.explanation; })      
+*/
+
+var tooltip = d3.select("#glossary_tooltip")
+    .append("tooltip")
+    .attr("class", "tooltip")
+    .style("opacity",0)
+
+circles
+  .on("mouseover", function(d) {
+    tooltip.transition()
+      .duration(300)
+      .style("opacity", 1)
+  })
+  .on("mousemove", function(d) {
+    tooltip
+    .text(d.explanation)
+    .style("left", (d3.event.pageX - d3.select('.tooltip').node().offsetWidth - 5) + "px")
+    .style("top", (d3.event.pageY - d3.select('.tooltip').node().offsetHeight - 5) + "px")
+  })
+  .on("mouseout", function(d) {
+    tooltip.transition()
+      .text("")
+      .duration(0)
+      .style("opacity", 0)
+  })
 
   simulation
       .nodes(graph.nodes)
