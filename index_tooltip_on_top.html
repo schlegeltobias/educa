@@ -70,8 +70,8 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody().strength(-300))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-//d3.json("vc_glossary.json", function(error, graph) {
-d3.json("https://raw.githubusercontent.com/schlegeltobias/educa/main/vc_glossary.json", function(error, graph) {
+d3.json("vc_glossary.json", function(error, graph) {
+//d3.json("https://raw.githubusercontent.com/schlegeltobias/educa/main/vc_glossary.json", function(error, graph) {
   if (error) throw error;
 
 // set random seed
@@ -133,7 +133,11 @@ circles
   })
   .on("mousemove", function(d) {
     tooltip
-      .text(d.explanation)
+      .text(d.label+": ")
+      .style("font-weight", 700)
+     .append("span")
+     .style("font-weight", 400)
+     .text(d.explanation)
       .style("top", "0px")
       .style("left", "0px");
   })
