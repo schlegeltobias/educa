@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+
+/*------*/
+/* Grid */
+/*------*/
+  
+.wrapper {
+    display: grid;
+    grid-gap: 0px;
+    grid-template-rows: repeat(auto-fill, 5em);
+    grid-template-columns: repeat(auto-fill, 20em);
+}
+
+/*---------------*/
+/* Text in Boxes */
+/*---------------*/
+
+
+
+.textIssuer, .textHolder, .textBlockchain, .textVerifier, .labelNumber {
+    font-size: 12pt;
+    font-family: Arial, Helvetica, sans-serif;
+    text-anchor: middle;
+    fill: white;
+}
+
+
+/*------------------*/
+/* Formating Slider */
+/*------------------*/ 
+
+
+
+/*Appearance of slider band */
+#vcProcessSlider {
+  position: absolute;
+ -webkit-appearance: none;
+  appearance: none;
+  width: 570px;
+  height: 15px;
+  background: rgba(204,196,194,0.5);
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 0px;
+  border: none;
+  margin-left: 10px;
+  margin-top: 20px;
+  grid-row: 1/1;
+  grid-column: 1/-1;
+  }
+
+
+/*Appearance of slider item*/
+#vcProcessSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: rgba(82,156,154,0.8);
+  cursor: pointer;
+  border: none;
+  border-radius: 0px
+}
+
+/*Appearance of slider item in Firefox*/
+#vcProcessSlider::-moz-range-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 18px;
+  background: rgba(82,156,154,0.8);
+  cursor: pointer;
+  border: none;
+  border-radius: 0px
+}
+
+
+/*Appeareance when hovering over the slider*/
+#vcProcessSlider:hover {
+  opacity: 1;
+}
+
+#canvas {
+    grid-row: 2/-1;
+    grid-column: 1/-1;
+}
+
+.issuer {
+    position: absolute;
+    z-index: 99
+}
+
+.arrowIH {
+    position: absolute;
+    z-index: -100
+}
+
+
+    </style>
+
+</head>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+
+<body>
+    <div class="wrapper">
+        <div class="slider_row" rowspan = "5">
+            <input type="range" name="vcProcessSlider" id=vcProcessSlider min="0" max="4" value="0" step="1" onchange="updateStep()">
+            </div>
+        <svg id="canvas" width="1000" height="800">
+            <defs class="arrows1">
+                <marker
+                id="arrow"
+                markerUnits="strokeWidth"
+                markerWidth="12"
+                markerHeight="12"
+                viewBox="0 0 12 12"
+                refX="4"
+                refY="2.5"
+                orient="auto">
+                <path d="M0 0 L5 2.5 L0 5 Z" style="fill: #529c9a;"></path>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+
+<script>
+
+/*-----------------------*/
+/* Definition Dimensions */
+/*-----------------------*/
+
+var rectWidth = 150
+var rectHight = rectWidth/1.618
+
+var firstRow = 0
+var secondRow = firstRow+rectHight+60
+var thirdRow = secondRow+rectHight+60
+var firstCol = 10
+var secondCol = firstCol+rectWidth+60
+var thirdCol = secondCol+rectWidth+60
+
+var blockWidth = thirdCol+rectWidth-firstCol
+
+var horDistLine = 10
+var vertDistLine = 5
+
+var radius = 12;
+
+
+/*-------------------*/
+/* Definition Colors */
+/*-------------------*/
+
+var jade = "#529c9a"
+var rubin = "#cd003a"
+var kobalt = "#2c4262"
+
+
+/*--------------*/
+/* Generate SVG */
+/*--------------*/
+
+var svg = d3.select("#canvas")
+            .append("svg")
+            .attr("width", 1000)
+            .attr("height", 600)
+
+/*--------*/
+/* Arrows */
+/*--------*/
+
+
+/* 
+Arrow Issuer --> Holder
+*/
+
+var IssuerHolder = svg.append("line")
+                        .attr("class", "arrowIH")
+                        .attr("x1", firstCol+rectWidth/2)  
+                        .attr("y1", secondRow+1.5)  
+                        .attr("x2", secondCol-1.5)  
+                        .attr("y2", firstRow+rectHight/2)  
+                        .attr("stroke", jade)  
+                        .attr("stroke-width",2)  
+                        .attr("marker-end","url(#arrow)")
+                        .attr("opacity", 0)
+
+
+/*
+Arrow Holder --> Issuer
+*/
+
+var HolderIssuer = svg.append("line")
+                        .attr("x1",secondCol+rectWidth/2-horDistLine)  
+                        .attr("y1",firstRow+rectHight-1.5)  
+                        .attr("x2", firstCol+rectWidth+1.5)  
+                        .attr("y2",secondRow+rectHight/2-vertDistLine) 
+                        .attr("stroke", jade)  
+                        .attr("stroke-width",2)  
+                        .attr("marker-end","url(#arrow)") 
+                        .attr("opacity", 0);
+
+/*
+Arrow Holder --> Verifier
+*/
+
+var HolderVerifier = svg.append("line")
+                        .attr("x1",secondCol+rectWidth/2+horDistLine)  
+                        .attr("y1",firstRow+rectHight-1.5)  
+                        .attr("x2", thirdCol-1.5)  
+                        .attr("y2",secondRow+rectHight/2-vertDistLine) 
+                        .attr("stroke", jade)  
+                        .attr("stroke-width",2)  
+                        .attr("marker-end","url(#arrow)")
+                        .attr("opacity", 0);
+
+
+/*
+Arrow Verifier --> Holder
+*/
+
+var VerifierHolder = svg.append("line")
+                        .attr("x1", thirdCol+rectWidth/2)  
+                        .attr("y1",secondRow+1.5)  
+                        .attr("x2",secondCol+rectWidth+1.5)  
+                        .attr("y2",firstRow+rectHight/2)  
+                        .attr("stroke", jade)  
+                        .attr("stroke-width",2)  
+                        .attr("marker-end","url(#arrow)")
+                        .attr("opacity", 0);
+
+
+/*
+Arrow Issuer --> Blockchain
+*/
+
+var IssuerBlockchain = svg.append("line")
+                        .attr("x1",firstCol+rectWidth/2-2*horDistLine)  
+                        .attr("y1",secondRow+rectHight)  
+                        .attr("x2", firstCol+rectWidth/2-2*horDistLine)  
+                        .attr("y2",thirdRow-1.5) 
+                        .attr("stroke", jade)  
+                        .attr("stroke-width",2)  
+                        .attr("marker-end","url(#arrow)")
+                        .attr("opacity", 0);
+
+
+/*
+Arrow Blockchain --> Issuer
+*/
+
+var BlockchainIssuer = svg.append("line")
+                        .attr("x1", firstCol+rectWidth/2+2*horDistLine)  
+                        .attr("y1",thirdRow) 
+                        .attr("x2",firstCol+rectWidth/2+2*horDistLine)  
+                        .attr("y2",secondRow+rectHight+1.5)  
+                        .attr("stroke", jade)  
+                        .attr("stroke-width",2)  
+                        .attr("marker-end","url(#arrow)")
+                        .attr("opacity", 0);
+
+
+
+/*
+Arrow Verifier --> Blockchain
+*/
+
+var VerifierBlockchain = svg.append("line")
+                        .attr("x1",thirdCol+rectWidth/2-2*horDistLine)  
+                        .attr("y1",secondRow+rectHight)  
+                        .attr("x2", thirdCol+rectWidth/2-2*horDistLine)  
+                        .attr("y2",thirdRow-1.5) 
+                        .attr("stroke",jade)  
+                        .attr("stroke-width",2)  
+                        .attr("marker-end","url(#arrow)")
+                        .attr("opacity", 0);
+
+
+/*
+Arrow Blockchain --> Verifier
+*/
+
+var BlockchainVerifier = svg.append("line")
+                            .attr("x1", thirdCol+rectWidth/2+2*horDistLine)  
+                            .attr("y1",thirdRow) 
+                            .attr("x2",thirdCol+rectWidth/2+2*horDistLine)  
+                            .attr("y2",secondRow+rectHight+1.5)  
+                            .attr("stroke",jade)  
+                            .attr("stroke-width",2)  
+                            .attr("marker-end","url(#arrow)")
+                            .attr("opacity", 0);
+
+
+/*------------*/
+/* Rectangles */
+/*------------*/
+
+/*
+Rectangle Issuer
+*/
+
+svg.append("rect")
+    .attr("class", "issuer")
+    .attr("x", firstCol)
+    .attr("y", secondRow)
+    .attr("width", rectWidth)
+    .attr("height", rectHight)
+    .attr("fill", kobalt)
+    .attr("stroke", "black")
+    .attr("stroke-width", 0)
+
+svg.append("text")
+    .text("Ausgabestelle")
+    .attr("class", "textIssuer")
+    .attr("x", firstCol+rectWidth/2)
+    .attr("y", secondRow+rectHight/2)
+
+/*
+Rectangle Holder
+*/
+
+svg.append("rect")
+    .attr("class", "Holder")
+    .attr("x", secondCol)
+    .attr("y", firstRow)
+    .attr("width", rectWidth)
+    .attr("height", rectHight)
+    .attr("fill", kobalt)
+    .attr("stroke", "black")
+    .attr("stroke-width", 0)
+
+svg.append("text")
+    .text("Inhaber:in")
+    .attr("class", "textHolder")
+    .attr("x", secondCol+rectWidth/2)
+    .attr("y", firstRow+rectHight/2)
+
+/*
+Rectangle Blockchain
+*/
+
+svg.append("rect")
+    .attr("class", "blockchain")
+    .attr("x", firstCol)
+    .attr("y", thirdRow)
+    .attr("width", blockWidth)
+    .attr("height", rectHight)
+    .attr("fill", kobalt)
+    .attr("stroke", "black")
+    .attr("stroke-width", 0)
+
+svg.append("text")
+    .text("Blockchain")
+    .attr("class", "textBlockchain")
+    .attr("x", secondCol+rectWidth/2)
+    .attr("y", thirdRow+rectHight/2)
+
+
+/*
+Rectangle Verifier
+*/
+svg.append("rect")
+    .attr("class", "verifier")
+    .attr("x", thirdCol)
+    .attr("y", secondRow)
+    .attr("width", rectWidth)
+    .attr("height", rectHight)
+    .attr("fill", kobalt)
+    .attr("stroke", "black")
+    .attr("stroke-width", 0)
+
+svg.append("text")
+    .text("Überprüfer:in")
+    .attr("class", "textVerifier")
+    .attr("x", thirdCol+rectWidth/2)
+    .attr("y", secondRow+rectHight/2)
+
+
+/*-------*/
+/* Steps */
+/*-------*/
+
+
+/* 
+Circle Issuer --> Holder
+*/
+
+var IssuerHolderCircle = svg.append("circle")
+                .attr("cx", secondCol-1.5 - (secondCol-1.5-(firstCol+rectWidth/2))/2)
+                .attr("cy", secondRow+1.5 -((secondRow+1.5)-(firstRow+rectHight/2))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Holder --> Issuer
+*/
+
+var HolderIssuerCircle = svg.append("circle")
+                .attr("cx", secondCol+rectWidth/2-horDistLine -((secondCol+rectWidth/2-horDistLine)-(firstCol+rectWidth+1.5))/2)
+                .attr("cy", secondRow+rectHight/2-vertDistLine-((secondRow+rectHight/2-vertDistLine)-(firstRow+rectHight-1.5))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Holder --> Verifier
+*/
+
+var HolderVerifierCircle = svg.append("circle")
+                .attr("cx", thirdCol-1.5-(thirdCol-1.5-(secondCol+rectWidth/2+horDistLine))/2)
+                .attr("cy", secondRow+rectHight/2-vertDistLine-(secondRow+rectHight/2-vertDistLine-(firstRow+rectHight-1.5))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Verifier --> Holder
+*/
+
+var VerifierHolderCircle = svg.append("circle")
+                .attr("cx", thirdCol+rectWidth/2-(thirdCol+rectWidth/2-(secondCol+rectWidth+1.5))/2)
+                .attr("cy", secondRow+1.5-(secondRow+1.5-(firstRow+rectHight/2))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Issuer --> Blockchain
+*/
+
+var IssuerBlockchainCircle = svg.append("circle")
+                .attr("cx", firstCol+rectWidth/2-2*horDistLine)
+                .attr("cy", thirdRow-1.5-(thirdRow-1.5-(secondRow+rectHight))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Blockchain --> Issuer
+*/
+
+var BlockchainIssuerCircle = svg.append("circle")
+                .attr("cx", firstCol+rectWidth/2+2*horDistLine)
+                .attr("cy", thirdRow-1.5-(thirdRow-1.5-(secondRow+rectHight))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Verifier --> Blockchain
+*/
+
+var VerifierBlockchainCircle = svg.append("circle")
+                .attr("cx", thirdCol+rectWidth/2-2*horDistLine)
+                .attr("cy", thirdRow-1.5-(thirdRow-1.5-(secondRow+rectHight))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Blockchain --> Verifier
+*/
+
+var BlockchainVerifierCircle = svg.append("circle")
+                .attr("cx", thirdCol+rectWidth/2+2*horDistLine)
+                .attr("cy", thirdRow-(thirdRow-(secondRow+rectHight+1.5))/2)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+
+/*
+Circle Issuer
+*/
+
+var IssuerCircle = svg.append("circle")
+                .attr("cx", firstCol+rectWidth/2)
+                .attr("cy", secondRow+rectHight*0.75)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+/*
+Circle Holder
+*/
+
+var HolderCircle = svg.append("circle")
+                .attr("cx", secondCol+rectWidth/2)
+                .attr("cy", firstRow+rectHight*0.75)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+/*
+Circle Verifier
+*/
+
+var VerifierCircle = svg.append("circle")
+                .attr("cx", thirdCol+rectWidth/2)
+                .attr("cy", secondRow+rectHight*0.75)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)                
+
+/*
+Circle Blockchain
+*/
+
+var BlockchainCircle = svg.append("circle")
+                .attr("cx", firstCol+blockWidth/2)
+                .attr("cy", thirdRow+rectHight*0.75)
+                .attr("r", "" + radius + "px")
+                .style("fill", jade)
+                .attr("opacity", 0)
+
+/* Text Wird jeweils bei Update ergänzt                
+
+                var oneText = svg.append("text")
+                .attr("class", "labelNumber")
+                .text("1")
+                .attr("x", firstCol + (secondCol-firstCol)/2)
+                .attr("y", firstRow + (secondRow-firstRow)/2+radius/3)
+                .style("fill", "white")
+/*
+                
+
+
+/*-----------------*/
+/* Update function */
+/*-----------------*/
+
+function updateStep() {
+
+var selectedStep = document.getElementById("vcProcessSlider").value
+console.log(selectedStep)
+
+if (selectedStep == 0) {
+    /*
+    Arrows Step 0
+    */
+        IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 0
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        
+    /*
+    Circle Issuer
+    */
+
+        IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+}
+
+    if (selectedStep == 1) {
+    /*
+    Arrows Step 1
+    */
+        IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 1)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 1
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 1)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+    else if (selectedStep == 2)  {
+    /*
+    Arrows Step 2
+    */
+        IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 2
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 1)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+    else if (selectedStep == 3)  {
+    /*
+    Arrows Step 3
+    */
+    IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 1)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 3
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 1)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+    else if (selectedStep == 4)  {
+    /*
+    Arrows Step 4
+    */
+    IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 4
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 1)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+    else if (selectedStep == 5)  {
+    /*
+    Arrows Step 5
+    */
+    IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 5
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0) 
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+    else if (selectedStep == 6)  {
+    /*
+    Arrows Step 6
+    */
+    IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 6
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+    else if (selectedStep == 7)  {
+    /*
+    Arrows Step 7
+    */
+    IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 7
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+    else if (selectedStep == 8)  {
+    /*
+    Arrows Step 8
+    */
+    IssuerHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolder
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuer
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchain
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifier
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circles Step 8
+    */
+        IssuerHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        HolderVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierHolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        IssuerBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainIssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        VerifierBlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+        BlockchainVerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Issuer
+    */
+
+    IssuerCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    /*
+    Circle Holder
+    */
+
+        HolderCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+
+    /*
+    Circle Verifier
+    */
+
+        VerifierCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)           
+
+    /*
+    Circle Blockchain
+    */
+
+        BlockchainCircle
+        .transition()
+        .duration(2000)
+        .style("opacity", 0)
+    }
+
+}
+
+selectedStep = 0
+document.getElementById("vcProcessSlider").value = 0;
+
+</script>
+
+</body>
+</html>
