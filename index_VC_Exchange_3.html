@@ -15,7 +15,7 @@
 .wrapper {
     display: grid;
     grid-gap: 0px;
-    grid-template-rows: 10em 28em 20em;
+    grid-template-rows: 8em 28em 20em;
     grid-template-columns: repeat(auto-fill, 20em);
 }
 
@@ -23,12 +23,19 @@
 /* Text in Boxes */
 /*---------------*/
 
-
-
-.textIssuer, .textHolder, .textBlockchain, .textVerifier, .labelNumber {
+.textIssuer, .textHolder, .textBlockchain, .textVerifier, .labelNumber, .sliderLabels {
     font-size: 12pt;
     font-family: Arial, Helvetica, sans-serif;
     fill:  #2c4262;
+}
+
+
+.sliderLabels, #valuesSlider {
+    font-size: 10pt;
+    font-family: Arial, Helvetica, sans-serif;
+    fill:  #2c4262;
+    margin-left: 10px;
+    margin-bottom: 100px;
 }
 
 .textIssuer, .textHolder, .textBlockchain, .textVerifier {
@@ -113,9 +120,23 @@
     z-index: -100
 }
 
+datalist {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  writing-mode: horizontal-lr;
+  width: 570px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top:20px;
+}
+
+option {
+  padding: 0;
+}
 
 
-    </style>
+</style>
 
 </head>
 
@@ -124,24 +145,20 @@
 <body>
     <div class="wrapper">
         <div class="slider_row" rowspan = "5">
-            <input type="range" name="vcProcessSlider" id=vcProcessSlider min="0" max="4" value="0" step="1" onchange="updateStep()">
-            </div>
+            <input type="range" name="vcProcessSlider" id=vcProcessSlider list="valuesSlider" max=4 step="1" onchange="updateStep()">
+            <label for="vcProcessSlider" class="sliderLabels">Schritte zur Vergabe eines digitalen Nachweises</label>
+            <datalist id="valuesSlider">
+                <option value="0" label="Anfang"></option>
+                <option value="1" label= "Schritt 1"></option>
+                <option value="2" label= "Schritt 2"></option>
+                <option value="3" label= "Schritt 3"></option>
+                <option value="4" label= "Schritt 4"></option>
+            </datalist>
+        </div>
         <svg id="canvas" width="1000" height="800">
-            <defs class="arrows1">
-                <marker
-                id="arrow"
-                markerUnits="strokeWidth"
-                markerWidth="12"
-                markerHeight="12"
-                viewBox="0 0 12 12"
-                refX="4"
-                refY="2.5"
-                orient="auto">
-                <path d="M0 0 L5 2.5 L0 5 Z" style="fill: #529c9a;"></path>
-                </marker>
-            </defs>
         </svg>
         <div id="vcTooltip"></div>
+
     </div>
 
 <script>
@@ -185,8 +202,9 @@ var radius = 12;
 
 var jade = "#529c9a"
 var rubin = "#cd003a"
-//var kobalt = "#2c4262"
-var kobalt = "#ccc4c2"
+var kobalt = "#2c4262"
+var gray = "#ccc4c2"
+
 
 
 /*--------------*/
@@ -198,6 +216,7 @@ var svg = d3.select("#canvas")
             .attr("width", 1000)
             .attr("height", 600)
 
+
 /*------------*/
 /* Rectangles */
 /*------------*/
@@ -207,80 +226,100 @@ Rectangle Issuer
 */
 
 var Issuer = svg.append("rect")
-    .attr("class", "issuer")
-    .attr("x", firstCol)
-    .attr("y", secondRow)
-    .attr("width", rectWidth)
-    .attr("height", rectHight)
-    .attr("fill", kobalt)
-    .attr("stroke", "black")
-    .attr("stroke-width", 0)
+                .attr("class", "issuer")
+                .attr("x", firstCol)
+                .attr("y", secondRow)
+                .attr("width", rectWidth)
+                .attr("height", rectHight)
+                .attr("fill", gray)
+                .attr("stroke", "black")
+                .attr("stroke-width", 0)
 
-svg.append("text")
-    .text("Ausgabestelle")
-    .attr("class", "textIssuer")
-    .attr("x", firstCol+rectWidth/2)
-    .attr("y", secondRow+rectHight/2)
+var textIssuer = svg.append("text")
+                    .text("Ausgabestelle")
+                    .attr("class", "textIssuer")
+                    .attr("x", firstCol+rectWidth/2)
+                    .attr("y", secondRow+rectHight/2)
 
 /*
 Rectangle Holder
 */
 
 var Holder = svg.append("rect")
-    .attr("class", "Holder")
-    .attr("x", secondCol)
-    .attr("y", firstRow)
-    .attr("width", rectWidth)
-    .attr("height", rectHight)
-    .attr("fill", kobalt)
-    .attr("stroke", "black")
-    .attr("stroke-width", 0)
+                .attr("class", "Holder")
+                .attr("x", secondCol)
+                .attr("y", firstRow)
+                .attr("width", rectWidth)
+                .attr("height", rectHight)
+                .attr("fill", gray)
+                .attr("stroke", "black")
+                .attr("stroke-width", 0)
 
-svg.append("text")
-    .text("Inhaber:in")
-    .attr("class", "textHolder")
-    .attr("x", secondCol+rectWidth/2)
-    .attr("y", firstRow+rectHight/2)
+var textHolder = svg.append("text")
+                    .text("Inhaber:in")
+                    .attr("class", "textHolder")
+                    .attr("x", secondCol+rectWidth/2)
+                    .attr("y", firstRow+rectHight/2)
 
 /*
 Rectangle Blockchain
 */
 
 var Blockchain = svg.append("rect")
-    .attr("class", "blockchain")
-    .attr("x", firstCol)
-    .attr("y", thirdRow)
-    .attr("width", blockWidth)
-    .attr("height", rectHight)
-    .attr("fill", kobalt)
-    .attr("stroke", "black")
-    .attr("stroke-width", 0)
+                    .attr("class", "blockchain")
+                    .attr("x", firstCol)
+                    .attr("y", thirdRow)
+                    .attr("width", blockWidth)
+                    .attr("height", rectHight)
+                    .attr("fill", gray)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 0)
 
-svg.append("text")
-    .text("Blockchain")
-    .attr("class", "textBlockchain")
-    .attr("x", secondCol+rectWidth/2)
-    .attr("y", thirdRow+rectHight/2)
+var textBlockchain = svg.append("text")
+                        .text("Blockchain")
+                        .attr("class", "textBlockchain")
+                        .attr("x", secondCol+rectWidth/2)
+                        .attr("y", thirdRow+rectHight/2)
 
 
 /*
 Rectangle Verifier
 */
 var Verifier = svg.append("rect")
-    .attr("class", "verifier")
-    .attr("x", thirdCol)
-    .attr("y", secondRow)
-    .attr("width", rectWidth)
-    .attr("height", rectHight)
-    .attr("fill", kobalt)
-    .attr("stroke", "black")
-    .attr("stroke-width", 0)
+                .attr("class", "verifier")
+                .attr("x", thirdCol)
+                .attr("y", secondRow)
+                .attr("width", rectWidth)
+                .attr("height", rectHight)
+                .attr("fill", gray)
+                .attr("stroke", "black")
+                .attr("stroke-width", 0)
 
-svg.append("text")
-    .text("Überprüfer:in")
-    .attr("class", "textVerifier")
-    .attr("x", thirdCol+rectWidth/2)
-    .attr("y", secondRow+rectHight/2)
+var textVerifier = svg.append("text")
+                    .text("Überprüfer:in")
+                    .attr("class", "textVerifier")
+                    .attr("x", thirdCol+rectWidth/2)
+                    .attr("y", secondRow+rectHight/2)
+
+
+
+/*-------------------------*/
+/* Define Steps for Slider */
+/*-------------------------*/
+
+
+/*var step0Slider = 
+
+
+/*
+var step1Slider = 
+var step2Slider =
+var step3Slider =
+var step4Slider =
+
+
+
+
 
 /*-------------*/
 /* Define Text */
@@ -321,6 +360,7 @@ feMerge.append('feMergeNode').attr('in', 'SourceGraphic')
 function updateStep() {
 
 var selectedStep = document.getElementById("vcProcessSlider").value
+console.log(selectedStep)
 
     if (selectedStep == 1) {
 
@@ -378,7 +418,7 @@ var selectedStep = document.getElementById("vcProcessSlider").value
     .transition()
     .delay(5000)
     .duration(1000)
-    .style("fill", kobalt)
+    .style("fill", gray)
     .transition()
     .style('filter', "none")
     
@@ -393,6 +433,15 @@ var selectedStep = document.getElementById("vcProcessSlider").value
         .delay(6000)
         .duration(200)
         .style("opacity", 0)
+
+    textIssuer
+        .transition()
+        .style("fill", "white")
+        .duration(1000)
+        .transition()
+        .delay(5000)
+        .style("fill", kobalt)
+
 
 
     }
@@ -467,7 +516,7 @@ var selectedStep = document.getElementById("vcProcessSlider").value
     .transition()
     .delay(5000)
     .duration(1000)
-    .style("fill", kobalt)
+    .style("fill", gray)
     .transition()
     .style('filter', "none")
     
@@ -482,6 +531,15 @@ var selectedStep = document.getElementById("vcProcessSlider").value
         .delay(6000)
         .duration(200)
         .style("opacity", 0)
+
+
+    textHolder
+        .transition()
+        .style("fill", "white")
+        .duration(1000)
+        .transition()
+        .delay(5000)
+        .style("fill", kobalt)
     
     }
     
