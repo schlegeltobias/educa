@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+
+/*------*/
+/* Grid */
+/*------*/
+  
+.wrapper {
+    display: grid;
+    grid-gap: 0px;
+    grid-template-rows: 8em 28em 20em;
+    grid-template-columns: repeat(auto-fill, 20em);
+}
+
+@font-face {
+    font-family: educaSansRegular;
+    src: url(Educa_Sans_Webfonts/EducaSans-Regular.woff2);
+}
+
+/*---------------*/
+/* Text in Boxes */
+/*---------------*/
+
+.textIssuer, .textHolder, .textBlockchain, .textVerifier, .labelNumber {
+    font-size: 12pt;
+    font-family: educaSansRegular, Arial, sans-serif;
+    fill:  #2c4262;
+}
+
+
+.sliderLabels { 
+    font-size: 10pt;
+    font-family: educaSansRegular, Arial, sans-serif;
+    fill:  #2c4262;
+    margin-left: 10px;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+#valuesSlider {
+    font-size: 10pt;
+    font-family: educaSansRegular, Arial, sans-serif;
+    fill:  #2c4262;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    writing-mode: horizontal-lr;
+    width: 570px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top:40px;
+}
+
+
+.textIssuer, .textHolder, .textBlockchain, .textVerifier {
+    text-anchor: middle;
+}
+
+.tooltip {
+    font-size: 12pt;
+    font-family: educaSansRegular, Arial, sans-serif;
+}
+
+#vcTooltip {
+    grid-column: 1/3;
+    grid-row: 3/-1;
+}
+
+/*------------------*/
+/* Formating Slider */
+/*------------------*/ 
+
+/*Appearance of slider band */
+#vcProcessSlider {
+  position: absolute;
+ -webkit-appearance: none;
+  appearance: none;
+  width: 570px;
+  height: 15px;
+  background: rgba(204,196,194,0.5);
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 0px;
+  border: none;
+  margin-left: 10px;
+  margin-top: 30px;  
+  grid-row: 1/1;
+  grid-column: 1/-1;
+  }
+
+
+/*Appearance of slider item*/
+#vcProcessSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: rgba(82,156,154,0.8);
+  cursor: pointer;
+  border: none;
+  border-radius: 0px
+}
+
+/*Appearance of slider item in Firefox*/
+#vcProcessSlider::-moz-range-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 18px;
+  background: rgba(82,156,154,0.8);
+  cursor: pointer;
+  border: none;
+  border-radius: 0px
+}
+
+
+/*Appeareance when hovering over the slider*/
+#vcProcessSlider:hover {
+  opacity: 1;
+}
+
+#canvas {
+    grid-row: 2/-1;
+    grid-column: 1/-1;
+}
+
+.issuer {
+    position: absolute;
+    z-index: 99
+}
+
+
+</style>
+
+</head>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+
+<body>
+    <div class="wrapper">
+        <div class="slider_row" rowspan = "5">
+            <input type="range" name="vcProcessSlider" id=vcProcessSlider list="valuesSlider" max=4 step="1" onchange="updateStep()">
+            <label for="vcProcessSlider" class="sliderLabels">Schritte zur Vergabe eines digitalen Nachweises</label>
+            <datalist id="valuesSlider">
+                <option value="0" label="Anfang"></option>
+                <option value="1" label= "Schritt 1"></option>
+                <option value="2" label= "Schritt 2"></option>
+                <option value="3" label= "Schritt 3"></option>
+                <option value="4" label= "Schritt 4"></option>
+            </datalist>
+        </div>
+        <svg id="canvas" width="1000" height="800">
+        </svg>
+        <div id="vcTooltip"></div>
+    </div>
+
+<script>
+
+/*-----------------------*/
+/* Definition Dimensions */
+/*-----------------------*/
+
+var rectWidth = 150
+var rectHight = rectWidth/1.618
+var firstRow = 0
+var secondRow = firstRow+rectHight+60
+var thirdRow = secondRow+rectHight+60
+var firstCol = 10
+var secondCol = firstCol+rectWidth+60
+var thirdCol = secondCol+rectWidth+60
+var blockWidth = thirdCol+rectWidth-firstCol
+var firstRowMid = firstRow+rectHight/2
+var secondRowMid =secondRow+rectHight/2
+var thirdRowMid =thirdRow+rectHight/2
+var firstColMid =firstCol+rectWidth/2
+var secondColMid =secondCol+rectWidth/2
+var thirdColMid =thirdCol+rectWidth/2
+var firstRowEnd = firstRow+rectHight
+var secondRowEnd = secondRow+rectHight
+var thirdRowEnd = thirdRow+rectHight
+var firstColEnd = firstCol+rectWidth
+var secondColEnd = secondCol+rectWidth
+var thirdColEnd = thirdCol+rectWidth
+
+
+//var horDistLine = 10
+//var vertDistLine = 5
+
+var radius = 12;
+
+
+/*-------------------*/
+/* Definition Colors */
+/*-------------------*/
+
+var jade = "#529c9a"
+var rubin = "#cd003a"
+var kobalt = "#2c4262"
+var gray = "#ccc4c2"
+
+
+
+/*--------------*/
+/* Generate SVG */
+/*--------------*/
+
+var svg = d3.select("#canvas")
+            .append("svg")
+            .attr("width", 1000)
+            .attr("height", 600)
+
+
+/*------------*/
+/* Rectangles */
+/*------------*/
+
+/*
+Rectangle Issuer
+*/
+
+var Issuer = svg.append("rect")
+                .attr("class", "issuer")
+                .attr("x", firstCol)
+                .attr("y", secondRow)
+                .attr("width", rectWidth)
+                .attr("height", rectHight)
+                .attr("fill", gray)
+                .attr("stroke", "black")
+                .attr("stroke-width", 0)
+
+var textIssuer = svg.append("text")
+                    .text("Ausgabestelle")
+                    .attr("class", "textIssuer")
+                    .attr("x", firstCol+rectWidth/2)
+                    .attr("y", secondRow+rectHight/2)
+
+/*
+Rectangle Holder
+*/
+
+var Holder = svg.append("rect")
+                .attr("class", "Holder")
+                .attr("x", secondCol)
+                .attr("y", firstRow)
+                .attr("width", rectWidth)
+                .attr("height", rectHight)
+                .attr("fill", gray)
+                .attr("stroke", "black")
+                .attr("stroke-width", 0)
+
+var textHolder = svg.append("text")
+                    .text("Inhaber:in")
+                    .attr("class", "textHolder")
+                    .attr("x", secondCol+rectWidth/2)
+                    .attr("y", firstRow+rectHight/2)
+
+/*
+Rectangle Blockchain
+*/
+
+var Blockchain = svg.append("rect")
+                    .attr("class", "blockchain")
+                    .attr("x", firstCol)
+                    .attr("y", thirdRow)
+                    .attr("width", blockWidth)
+                    .attr("height", rectHight)
+                    .attr("fill", gray)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 0)
+
+var textBlockchain = svg.append("text")
+                        .text("Blockchain")
+                        .attr("class", "textBlockchain")
+                        .attr("x", secondCol+rectWidth/2)
+                        .attr("y", thirdRow+rectHight/2)
+
+
+/*
+Rectangle Verifier
+*/
+var Verifier = svg.append("rect")
+                .attr("class", "verifier")
+                .attr("x", thirdCol)
+                .attr("y", secondRow)
+                .attr("width", rectWidth)
+                .attr("height", rectHight)
+                .attr("fill", gray)
+                .attr("stroke", "black")
+                .attr("stroke-width", 0)
+
+var textVerifier = svg.append("text")
+                    .text("Überprüfer:in")
+                    .attr("class", "textVerifier")
+                    .attr("x", thirdCol+rectWidth/2)
+                    .attr("y", secondRow+rectHight/2)
+
+
+/*-------------*/
+/* Define Text */
+/*-------------*/
+
+/*
+var textStep0 = "Die Ausgabestelle möchte der Inhaber:in einen digitalen Nachweis ausstellen und zusenden. Grob gesagt wird zuerst eine direkte und verschlüsselte Verbindung aufgebaut, dann der digitale Nachweis erstellt und schliesslich übermittelt. Die nachfolgenden Schritte verdeutlichen, wie sich dies im Detail abspielt."
+var textStep1 = "Für den Verbindungsaufbau schickt die Ausgabestelle der Inhaber:in eine Verbindungseinladung, z.B. in Form eines QR-Codes."
+var textStep2 = "Die Inhaber:in scannt den QR-Code mit ihrem Handy."
+var textStep3 = ""
+*/
+var textStep1 = "Die Ausgabestelle greift auf das Schema - eine Art leere Formularvorlage - auf der Blockchain zu."
+var textStep2 = "Die Ausgabestelle füllt das leere Schema aus und signiert das ausgefüllte Schema mit dem privaten Schlüssel der Ausgabestelle. Der digitale Nachweis ist fertiggestellt."
+var textStep3 = "Die Ausgabestelle übermittelt den digitalen Nachweis über eine direkte und verschlüsselte Verbindung an die Inhaber:in."
+var textStep4 = "Die Inhaber:in bewahrt den digitalen Nachweis in ihrer elektronischen Brieftasche auf und kann diesen künftig nach Bedarf mit einer Überprüfer:in teilen."
+
+var tooltip = d3.select("#vcTooltip")
+    .append("tooltip")
+    .attr("class", "tooltip")
+    .style("opacity",0)
+
+
+/*------*/
+/* Glow */
+/*------*/
+
+const defs = svg.append('defs')
+const glowDeviation = '1.5'
+
+// Filter for the outside glow
+const filter = defs.append('filter').attr('id', 'glow')
+filter.append('feGaussianBlur')
+    .attr('stdDeviation', glowDeviation)
+    .attr('result', 'coloredBlur')
+    
+const feMerge = filter.append('feMerge')
+feMerge.append('feMergeNode').attr('in', 'coloredBlur')
+feMerge.append('feMergeNode').attr('in', 'SourceGraphic')
+
+/*-----------------*/
+/* Update function */
+/*-----------------*/
+
+function updateStep() {
+
+var selectedStep = document.getElementById("vcProcessSlider").value
+console.log(selectedStep)
+
+    if (selectedStep == 1) {
+
+        var gen = d3.line()
+        var points = [[firstColEnd+2, secondRowMid], [secondColMid,secondRowMid], [secondColMid, thirdRow-2]]
+        var pathOfLine = gen(points)
+
+        var pathData =  svg.append('path')
+        .attr('d', pathOfLine)
+        .attr("stroke", jade)
+        .attr("opacity", 0.8)  
+        .attr("stroke-width", 5)
+        .attr("fill", "none")
+        .style('filter', 'url(#glow)')
+
+
+        var totalLength = pathData.node().getTotalLength();
+
+        pathData
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+        .transition()
+            .delay(2000)
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", totalLength)
+
+
+        tooltip
+        .attr("class", "tooltip")
+        .transition()
+        .style("opacity", 1)
+        .duration(0)
+        .text(textStep1)
+        .style("left","0px")
+        .style("top", "0px")
+        .transition()
+        .delay(6000)
+        .duration(200)
+        .style("opacity", 0)
+
+
+    }
+    else if (selectedStep == 2)  {
+    
+    Issuer
+    .transition()
+    .style("fill", jade)
+    .style('filter', 'url(#glow)')
+    .duration(1000)
+    .transition()
+    .delay(5000)
+    .duration(1000)
+    .style("fill", gray)
+    .transition()
+    .style('filter', "none")
+    
+    tooltip
+        .transition()
+        .style("opacity", 1)
+        .duration(0)
+        .text(textStep2)
+        .style("left","0px")
+        .style("top", "0px")
+    .transition()
+        .delay(6000)
+        .duration(200)
+        .style("opacity", 0)
+
+    textIssuer
+        .transition()
+        .style("fill", "white")
+        .duration(1000)
+        .transition()
+        .delay(5000)
+        .style("fill", kobalt)
+
+
+
+    }
+    else if (selectedStep == 3)  {
+    
+        var gen = d3.line()
+        var points = [[firstColMid, secondRow-2], [firstColMid,firstRowMid], [secondCol-2, firstRowMid]]
+        var pathOfLine = gen(points)
+
+        var pathData =  svg.append('path')
+        .attr("class", "pathStep3")
+        .attr('d', pathOfLine)
+        .attr("stroke", jade)
+        .attr("opacity", 0.8)  
+        .attr("stroke-width", 5)
+        .attr("fill", "none")
+        .style('filter', 'url(#glow)')
+
+        var totalLength = pathData.node().getTotalLength();
+
+        pathData
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+
+        var points = [[firstColMid, secondRow-1], [firstColMid,firstRowMid], [secondCol-1, firstRowMid]]
+        var pathOfLine = gen(points)
+
+        var pathData =  svg.append('path')
+        .attr("class", "pathStep3")
+        .attr('d', pathOfLine)
+        .attr("stroke-width", 35)
+        .attr("fill", "none")
+        .style('filter', 'url(#glow)')
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+            .delay(4000)
+            .duration(2000)
+            .style("opacity", 1)
+            .attr("stroke", "white")
+            .attr("stroke-dashoffset", 0)
+       
+        svg.selectAll(".pathStep3")
+            .transition()
+            .delay(6000).remove()
+
+
+    tooltip
+        .transition()
+        .style("opacity", 1)
+        .duration(0)
+        .text(textStep3)
+        .style("left","0px")
+        .style("top", "0px")
+    .transition()
+        .delay(6000)
+        .duration(200)
+        .style("opacity", 0)
+
+    }
+    else if (selectedStep == 4)  {
+
+    Holder
+    .transition()
+    .style("fill", jade)
+    .style('filter', 'url(#glow)')
+    .duration(1000)
+    .transition()
+    .delay(5000)
+    .duration(1000)
+    .style("fill", gray)
+    .transition()
+    .style('filter', "none")
+    
+    tooltip
+        .transition()
+        .style("opacity", 1)
+        .duration(0)
+        .text(textStep4)
+        .style("left","0px")
+        .style("top", "0px")
+    .transition()
+        .delay(6000)
+        .duration(200)
+        .style("opacity", 0)
+
+
+    textHolder
+        .transition()
+        .style("fill", "white")
+        .duration(1000)
+        .transition()
+        .delay(5000)
+        .style("fill", kobalt)
+    
+    }
+    
+}
+
+selectedStep = 0
+document.getElementById("vcProcessSlider").value = 0;
+
+</script>
+
+</body>
+</html>
