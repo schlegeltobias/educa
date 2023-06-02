@@ -364,7 +364,7 @@ feMerge.append('feMergeNode').attr('in', 'SourceGraphic')
         .attr("transform", "translate("+(firstColMid+20)+","+(secondRowMid+10)+")")
 
 
-// Generierung Schlüssel Holder
+// Generierung Schlüssel Issuer
     var keyPairIssuerP = [[0,30], [30,30], [30,20], [10,20], [10,10], [0,10]]
     var lineKeyPairIssuerP = lineGenerator(keyPairIssuerP)
     var pathKeyPairIssuerP = svg.append("path").attr("d", lineKeyPairIssuerP)
@@ -629,6 +629,8 @@ d3.select("#btnfw").on("click", function(){
         pathConHolderIssuer
             .style("opacity", 0)
 
+        pathKeyHolderIssuer
+            .style("opacity", 0)
         
         tooltip
         .attr("class", "tooltip")
@@ -690,6 +692,12 @@ d3.select("#btnfw").on("click", function(){
 
         pathConHolderIssuer
             .style("opacity", 0)
+
+        pathKeyPairIssuerP
+            .style("opacity", 0)    
+
+        pathKeyPairIssuerO
+            .style("opacity", 0)
         
         tooltip
         .attr("class", "tooltip")
@@ -743,6 +751,9 @@ d3.select("#btnfw").on("click", function(){
             .style("opacity", 1)
 
         pathConHolderIssuer
+            .style("opacity", 0)
+
+        pathKeyIssuerHolder
             .style("opacity", 0)
 
        
@@ -1025,6 +1036,9 @@ d3.select("#btnbw").on("click", function(){
 
         pathConHolderIssuer
             .style("opacity", 0)
+            
+        pathKeyHolderIssuer
+            .style("opacity", 0)
 
         
         tooltip
@@ -1087,6 +1101,12 @@ d3.select("#btnbw").on("click", function(){
 
         pathConHolderIssuer
             .style("opacity", 0)
+
+        pathKeyPairIssuerP
+            .style("opacity", 0)    
+
+        pathKeyPairIssuerO
+            .style("opacity", 0)
         
         tooltip
         .attr("class", "tooltip")
@@ -1140,6 +1160,9 @@ d3.select("#btnbw").on("click", function(){
             .style("opacity", 1)
 
         pathConHolderIssuer
+            .style("opacity", 0)
+
+        pathKeyIssuerHolder
             .style("opacity", 0)
 
        
