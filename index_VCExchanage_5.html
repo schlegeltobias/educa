@@ -14,13 +14,13 @@
   
 .wrapper {
     display: grid;
-    grid-gap: 0px;
-    grid-template-rows: 8em 28em 20em;
-    grid-template-columns: repeat(auto-fill, 20em);
+    grid-gap: 20px;
+    grid-template-columns: minmax(49%, auto) minmax(49%, auto) auto;
+    grid-template-rows: 30px 30px 1fr;
 }
 
 @font-face {
-    font-family: educaSansRegular;
+    font-family: educaSans;
     src: url(Educa_Sans_Webfonts/EducaSans-Regular.woff2);
 }
 
@@ -28,111 +28,142 @@
 /* Text in Boxes */
 /*---------------*/
 
-.textIssuer, .textHolder, .textBlockchain, .textVerifier, .labelNumber {
+.textIssuer, .textHolder, .textBlockchain, .textVerifier, .labelNumber, #vcTooltip {
+    font-size: 13pt;
+    font-family: educaSans, Arial, sans-serif;
+    fill:  #2c4262;
+}
+
+.radioLabelConnection, #titleRadio, .textLegend, .tooltip, .legendLabel {
+    font-size: 3vw;
+    font-family: educaSans, Arial, sans-serif;
+}
+
+@media screen and (min-width: 480px) {
+.radioLabelConnection, #titleRadio, .textLegend, .tooltip, .legendLabel {
     font-size: 12pt;
-    font-family: educaSansRegular, Arial, sans-serif;
-    fill:  #2c4262;
+    font-family: educaSans, Arial, sans-serif;
+    }
 }
 
-
-.sliderLabels { 
-    font-size: 10pt;
-    font-family: educaSansRegular, Arial, sans-serif;
-    fill:  #2c4262;
-    margin-left: 10px;
-    margin-top: 40px;
-    margin-bottom: 10px;
+#titleRadio {
+    font-weight: 700;
+    grid-column: 1/-1;
 }
-
-#valuesSlider {
-    font-size: 10pt;
-    font-family: educaSansRegular, Arial, sans-serif;
-    fill:  #2c4262;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    writing-mode: horizontal-lr;
-    width: 560px;
-    margin-bottom: 10px;
-    padding-bottom: 20px;
-    margin-left: 20px;
-    margin-top:40px;
-}
-
 
 .textIssuer, .textHolder, .textBlockchain, .textVerifier {
     text-anchor: middle;
 }
 
-.tooltip {
-    font-size: 11pt;
-    font-family: educaSansRegular, Arial, sans-serif;
-}
-
 #vcTooltip {
-    grid-column: 1/3;
-    grid-row: 3/-1;
-}
-
-/*------------------*/
-/* Formating Slider */
-/*------------------*/ 
-
-/*Appearance of slider band */
-#vcProcessSlider {
-  position: absolute;
- -webkit-appearance: none;
-  appearance: none;
-  width: 570px;
-  height: 15px;
-  background: rgba(204,196,194,0.5);
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-  border-radius: 0px;
-  border: none;
-  margin-left: 10px;
-  margin-top: 30px;  
-  grid-row: 1/1;
-  grid-column: 1/-1;
-  }
-
-
-/*Appearance of slider item*/
-#vcProcessSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  background: rgba(82,156,154,0.8);
-  cursor: pointer;
-  border: none;
-  border-radius: 0px
-}
-
-/*Appearance of slider item in Firefox*/
-#vcProcessSlider::-moz-range-thumb {
-  -webkit-appearance: none;
-  width: 28px;
-  height: 18px;
-  background: rgba(82,156,154,0.8);
-  cursor: pointer;
-  border: none;
-  border-radius: 0px
-}
-
-
-/*Appeareance when hovering over the slider*/
-#vcProcessSlider:hover {
-  opacity: 1;
-}
-
-#canvas {
-    grid-row: 2/-1;
+    font-style: italic;
+    grid-row: -1/-1;
     grid-column: 1/-1;
 }
 
 
+/*-----------------------------*/
+/* Formating the radio buttons */
+/*-----------------------------*/ 
+
+#radioContainer {
+    grid-column: 1/-1;
+    grid-row: 2/2
+}
+
+/* Customize the label (the container) */
+.radioLabelConnection {
+    position: relative;
+    padding-left: 35px;
+    padding-bottom: 50px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin-left: 20px;
+  }
+  
+  /* Hide the browser's default radio button */
+  .radioLabelConnection input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* Create a custom radio button */
+  .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 25px;
+        width: 25px;
+        background-color: rgba(204,196,194,0.4);
+        border-radius: 50%;
+    }
+
+  @media screen and (min-width: 480px) {
+    .checkmark {
+        position: absolute;
+        top: 2px;
+        left: 0;
+        height: 25px;
+        width: 25px;
+        background-color: rgba(204,196,194,0.4);
+        border-radius: 50%;
+    }
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .radioLabelConnection:hover input ~ .checkmark {
+    background-color: rgba(204,196,194,0.8);
+  }
+  
+  /* When the radio button is checked, add a blue background */
+  .radioLabelConnection input:checked ~ .checkmark {
+    background-color: #529c9a;
+  }
+  
+  /* Create the indicator (the dot/circle - hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the indicator (dot/circle) when checked */
+  .radioLabelConnection input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the indicator (dot/circle) */
+  .radioLabelConnection .checkmark:after {
+    top: 7.5px;
+    left: 7.5px;
+    bottom: 7.5px; 
+    right: 7.5px; 
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+  }
+
+
+/*--------------------------------*/
+/* Formating of the SVG Container */
+/*--------------------------------*/ 
+
+.svg-container {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    overflow: hidden;
+    grid-row: 3/3;
+    grid-column: 1/-1;
+    margin-right: 20px;
+}
 
 </style>
 
@@ -142,25 +173,39 @@
 
 <body>
     <div class="wrapper">
-        <div class="slider_row" rowspan = "5">
-            <input type="range" name="vcProcessSlider" id=vcProcessSlider list="valuesSlider" max=11 step="1" onchange="updateStep()">
-            <label for="vcProcessSlider" class="sliderLabels">Schritte zur Vergabe eines digitalen Nachweises</label>
-            <datalist id="valuesSlider">
-                <option value="0" label="0"></option>
-                <option value="1" label= "1"></option>
-                <option value="2" label= "2"></option>
-                <option value="3" label= "3"></option>
-                <option value="4" label= "4"></option>
-                <option value="5" label= "5"></option>
-                <option value="6" label= "6"></option>
-                <option value="7" label= "7"></option>
-                <option value="8" label= "8"></option>
-                <option value="9" label= "9"></option>
-                <option value="10" label= "10"></option>
-                <option value="11" label= "11"></option>
-            </datalist>
+        <p id="titleRadio">Wählen Sie einen Schritt des Verbindungsaufbaus</p>
+        <div id="radioContainer"> 
+                <label onclick="updateStep0()" class="radioLabelConnection">0
+                    <input id="radioStep0" type="radio" name="radio" value=0>
+                    <span class="checkmark"></span>
+                </label>
+                <label onclick="updateStep1()" class="radioLabelConnection">1
+                    <input id="radioStep1" type="radio" name="radio" value=1>
+                    <span class="checkmark"></span>
+                </label>
+                 <label onclick="updateStep2()" class="radioLabelConnection">2
+                    <input id="radioStep2" type="radio" name="radio" value=2>
+                    <span class="checkmark"></span>
+                </label>
+                <label onclick="updateStep3()" class="radioLabelConnection">3
+                    <input id="radioStep3" type="radio" name="radio" value=3>
+                    <span class="checkmark"></span>
+                </label>
+                <label onclick="updateStep4()" class="radioLabelConnection">4
+                    <input id="radioStep4" type="radio" name="radio" value=4>
+                    <span class="checkmark"></span>
+                </label>
+
+                <label onclick="updateStep5()" class="radioLabelConnection">5
+                    <input id="radioStep5" type="radio" name="radio" value=5>
+                    <span class="checkmark"></span>
+                </label>
+                <label onclick="updateStep6()" class="radioLabelConnection">6
+                    <input id="radioStep6" type="radio" name="radio" value=6>
+                    <span class="checkmark"></span>
+                </label>
         </div>
-        <svg id="canvas" width="1000" height="800">
+        <div id="canvasKeyExchange" class="svg-container"></div>
         </svg>
         <div id="vcTooltip"></div>
     </div>
@@ -171,14 +216,15 @@
 /* Definition Dimensions */
 /*-----------------------*/
 
-var rectWidth = 150
+var rectWidth = 180
 var rectHight = rectWidth/1.618
 var firstRow = 10
-var secondRow = firstRow+rectHight+60
-var thirdRow = secondRow+rectHight+60
+var colWidth = 20
+var secondRow = firstRow+rectHight+colWidth
+var thirdRow = secondRow+rectHight+colWidth
 var firstCol = 10
-var secondCol = firstCol+rectWidth+60
-var thirdCol = secondCol+rectWidth+60
+var secondCol = firstCol+rectWidth+colWidth
+var thirdCol = secondCol+rectWidth+colWidth
 var blockWidth = thirdCol+rectWidth-firstCol
 var firstRowMid = firstRow+rectHight/2
 var secondRowMid =secondRow+rectHight/2
@@ -192,13 +238,19 @@ var thirdRowEnd = thirdRow+rectHight
 var firstColEnd = firstCol+rectWidth
 var secondColEnd = secondCol+rectWidth
 var thirdColEnd = thirdCol+rectWidth
-
+var cornerRadius = 3
+var lineEdgeRadius = 5
+var duration = 1000
+var delay1 = 1000
+var delay2 = 2000
 
 /*---------------------------*/
 /* Definition Line Generator */
 /*---------------------------*/
 
 var lineGenerator =d3.line()
+var curveGenerator =d3.line().curve(d3.curveBundle.beta(1))
+
 
 /*-------------------*/
 /* Definition Colors */
@@ -220,10 +272,11 @@ var granat = "#940a2d"
 /* Generate SVG */
 /*--------------*/
 
-var svg = d3.select("#canvas")
+var svg = d3.select("div#canvasKeyExchange")
             .append("svg")
-            .attr("width", 1000)
-            .attr("height", 600)
+            .attr("viewBox", "0 0 600 390")
+            .attr("preserveAspectRatio", "xMinYMin meet");
+
 
 
 /*------------*/
@@ -244,6 +297,7 @@ var Issuer = svg.append("rect")
                 .attr("fill-opacity", 0.2)
                 .attr("stroke", gray)
                 .attr("stroke-width", 3)
+                .attr("rx", cornerRadius)
 
 var textIssuer = svg.append("text")
                     .text("Ausgabestelle")
@@ -265,10 +319,11 @@ var Holder = svg.append("rect")
                 .attr("fill-opacity", 0.2)
                 .attr("stroke", gray)
                 .attr("stroke-width", 3)
+                .attr("rx", cornerRadius)
 
 
 var textHolder = svg.append("text")
-                    .text("Inhaberin")
+                    .text("Inhaber:in")
                     .attr("class", "textHolder")
                     .attr("x", secondCol+rectWidth/2)
                     .attr("y", firstRow+rectHight/2)
@@ -287,15 +342,14 @@ var Blockchain = svg.append("rect")
                     .attr("fill-opacity", 0.2)
                     .attr("stroke", gray)
                     .attr("stroke-width", 0.5)
+                    .attr("rx", cornerRadius)
 
 var textBlockchain = svg.append("text")
-                        .text("Blockchain")
+                        .text("Dezentraler Datenspeicher (z.B. Blockchain)")
                         .attr("class", "textBlockchain")
                         .attr("x", secondCol+rectWidth/2)
                         .attr("y", thirdRow+rectHight/2)
                         .attr("opacity", 0.4)
-
-
 
 /*
 Rectangle Verifier
@@ -307,35 +361,31 @@ var Verifier = svg.append("rect")
                 .attr("width", rectWidth)
                 .attr("height", rectHight)
                 .attr("fill", gray)
-                    .attr("stroke", gray)
-                    .attr("stroke-width", 0.5)
-                    .attr("fill", gray)
-                    .style("fill-opacity", 0.1)
+                .attr("fill-opacity", 0.2)
+                .attr("stroke", gray)
+                .attr("stroke-width", 0.5)
+                .attr("rx", cornerRadius)
 
 var textVerifier = svg.append("text")
-                    .text("Überprüfer:in")
+                    .text("Überprüfungsstelle")
                     .attr("class", "textVerifier")
                     .attr("x", thirdCol+rectWidth/2)
                     .attr("y", secondRow+rectHight/2)
                     .attr("opacity", 0.4)
 
 
+
 /*-------------*/
 /* Define Text */
 /*-------------*/
 
-var textStep0 = ""
-var textStep1 = "Die Ausgbaestelle möchte der Inhaberin einen digitalen Nachweis austellen. Dazu wird i) eine direkte und verschlüsselte Verbindung aufgebaut, ii) der digitale Nachweis erstellt und iii) übermittelt. Die nachfolgenden Schritte zeigen diesen Prozess im Detail. Dabei spielen sich die Schritte zumeist sekundenschnell im Hintergrund ab, werden hier aber zum besseren Verständnis aufgedröselt."
-var textStep2 = "Für den Verbindungsaufbau übergibt die Ausgabestelle der Inhaberin eine Verbindungseinladung, z.B. in Form eines QR-Codes."
-var textStep3 = "Die Inhaberin scannt den QR-Code mit ihrem Handy und nimmt die Verbindungseinladung an. Dann wird im Hintergrund ein Schlüsselpaar generiert, bestehend aus einem privaten (violet) und öffentlichen (gelb) Schlüssel. Dieses Schlüsselpaar ist verbindungsspezifisch." 
-var textStep4 = "Eine Kopie des öffentlichen Schlüssel (gelb) wird mit der Nachricht über die Annahme der Verbindungseinladung an die Ausgabestelle übermittelt und in deren elektronischer Brieftasche gespeichert. Der private Schlüssel (violet) bleibt in der elektronischen Brieftasche der Inhaberin."
-var textStep5 = "Auch bei der Ausgabestelle wird nun ein Schlüsselpaar für die Verbindung generiert, mit privatem (violet) und öffentlichem (gelb) Schlüssel."
-var textStep6 = "Während der private Schlüssel in der elektronischen Brieftasche der Ausgabestelle bleibt, wird eine Kopie des öffentlichen Schlüssels und die Bestätigung des Verbindungsaufbaus an die Inhaberin versandt. Die Kopie des öffentlichen Schlüssels (gelb) kommt in die elektronische Brieftasche der Inhaberin."
-var textStep7 = "Nun besteht eine direkte und verschlüsselte Verbindung zwischen Ausgabestelle und Inhaberin, über die digitale Nachweise und Nachrichten ausgetauscht werden können."
-var textStep8 = "Um nun einen digitalen Nachweis auszustellen greift die Ausgabestelle auf das spezifische Schema – eine Art leere Formularvorlage für diesen digitalen Nachweis – auf der Blockchain zu."
-var textStep9 = "Die Ausgabestelle füllt das Schema aus und signiert es mit dem privaten Schlüssel der Ausgabestelle - nicht zu verwechseln mit den verbindungsspezifischen Schlüsseln aus den vorherigen Schritten. Der digitale Nachweis ist fertig."
-var textStep10 = "Die Ausgabestelle übermittelt den digitalen Nachweis über die direkte und verschlüsselte Verbindung an die Inhaberin."
-var textStep11 = "Die Inhaberin entschlüsselt die Nachricht mithilfe des verbindungsspezifischen Schlüssels der Ausgabestelle und bewahrt den darin enthaltenen digitalen Nachweis in ihrer elektronischen Brieftasche auf."
+var textStep0 = "Die Ausgabestelle möchte eine direkte und verschlüsselte Verbindung zur Inhaberin herstellen, z.B. damit sie später einen digitalen Nachweis über diese Verbindung ausstellen kann. Die nachfolgenden Schritte zeigen diesen Prozess im Detail. Dabei spielen sich die Schritte zumeist sekundenschnell im Hintergrund ab, werden hier aber zum besseren Verständnis aufgedröselt."
+var textStep1 = "Für den Verbindungsaufbau übergibt die Ausgabestelle der Inhaberin eine Verbindungseinladung, z.B. in Form eines QR-Codes."
+var textStep2 = "Die Inhaberin scannt den QR-Code mit ihrem Handy und nimmt die Verbindungseinladung an. Dann wird im Hintergrund ein Schlüsselpaar generiert, bestehend aus einem privaten (violet) und öffentlichen (gelb) Schlüssel. Dieses Schlüsselpaar ist verbindungsspezifisch." 
+var textStep3 = "Eine Kopie des öffentlichen Schlüssel (gelb) wird mit der Nachricht über die Annahme der Verbindungseinladung an die Ausgabestelle übermittelt und in deren elektronischer Brieftasche gespeichert. Der private Schlüssel (violet) bleibt in der elektronischen Brieftasche der Inhaberin."
+var textStep4 = "Auch bei der Ausgabestelle wird nun ein Schlüsselpaar für die Verbindung generiert, mit privatem (violet) und öffentlichem (gelb) Schlüssel."
+var textStep5 = "Während der private Schlüssel in der elektronischen Brieftasche der Ausgabestelle bleibt, wird eine Kopie des öffentlichen Schlüssels und die Bestätigung des Verbindungsaufbaus an die Inhaberin versandt. Die Kopie des öffentlichen Schlüssels (gelb) kommt in die elektronische Brieftasche der Inhaberin."
+var textStep6 = "Nun besteht eine direkte und verschlüsselte Verbindung zwischen Ausgabestelle und Inhaberin, über die digitale Nachweise und Nachrichten ausgetauscht werden können."
 
 var tooltip = d3.select("#vcTooltip")
     .append("tooltip")
@@ -362,13 +412,9 @@ feMerge.append('feMergeNode').attr('in', 'SourceGraphic')
 
 
 
-
-
 /*-----------*/
 /* Schlüssel */
 /*-----------*/
-
-
 
 // Generierung Schlüssel Holder
     var keyPairHolderP = [[0,30], [10,30], [10,20], [20,20], [20,10], [10,10], [10,0], [0,0]]
@@ -423,8 +469,8 @@ var pathKeyIssuerHolder = svg.append("path").attr("d", lineKeyPairIssuerO )
 /* Verbindung */
 /*------------*/
 
-var conHolderIssuer = [[firstColMid, secondRow-2], [firstColMid,firstRowMid], [secondCol-2, firstRowMid]]
-var lineConHolderIssuer = lineGenerator(conHolderIssuer)
+var conHolderIssuer = [[firstColMid, secondRow-2], [firstColMid,firstRowMid+lineEdgeRadius], [firstColMid,firstRowMid], [firstColMid+lineEdgeRadius,firstRowMid], [secondCol-2, firstRowMid]]
+var lineConHolderIssuer = curveGenerator(conHolderIssuer)
 
 var pathConHolderIssuer =  svg.append('path')
         .attr("class", "pathStep7")
@@ -433,8 +479,6 @@ var pathConHolderIssuer =  svg.append('path')
         .attr("stroke-width", 20)
         .attr("fill", "none")
         .style("opacity", 0)
-
-
 
 
 /*-----------------*/
@@ -448,14 +492,9 @@ tooltip
         .style("left","0px")
         .style("top", "0px")
 
-function updateStep() {
+function updateStep0() {
 
-var selectedStep = document.getElementById("vcProcessSlider").value
-console.log(selectedStep)
-
-    if (selectedStep == 0) {
-
-        pathKeyPairHolderO
+    pathKeyPairHolderO
             .style("opacity", 0)
 
         pathKeyPairHolderP
@@ -475,12 +514,6 @@ console.log(selectedStep)
             
         pathConHolderIssuer
             .style("opacity", 0)
-
-        Blockchain
-            .attr("stroke-width", 0.5)
-
-        textBlockchain
-            .attr("opacity", 0.4)
 
         tooltip
         .attr("class", "tooltip")
@@ -489,49 +522,11 @@ console.log(selectedStep)
         .style("left","0px")
         .style("top", "0px")
 
-    }
+}
 
-    if (selectedStep == 1) {
+function updateStep1() {
 
-        pathKeyPairHolderO
-            .style("opacity", 0)
-
-        pathKeyPairHolderP
-            .style("opacity", 0)
-
-        pathKeyHolderIssuer
-            .style("opacity", 0)
-
-        pathKeyPairIssuerO
-            .style("opacity", 0)
-
-        pathKeyPairIssuerP
-            .style("opacity", 0)
-
-        pathKeyIssuerHolder
-            .style("opacity", 0)
-            
-        pathConHolderIssuer
-            .style("opacity", 0)
-
-        Blockchain
-            .attr("stroke-width", 0.5)
-
-        textBlockchain
-            .attr("opacity", 0.4)
-
-
-        tooltip
-        .attr("class", "tooltip")
-        .style("opacity", 1)
-        .text(textStep1)
-        .style("left","0px")
-        .style("top", "0px")
-    }
-
-    if (selectedStep == 2) {
-
-        pathKeyPairHolderO
+    pathKeyPairHolderO
             .style("opacity", 0)
 
         pathKeyPairHolderP
@@ -552,11 +547,6 @@ console.log(selectedStep)
         pathConHolderIssuer
             .style("opacity", 0)
 
-        Blockchain
-            .attr("stroke-width", 0.5)
-
-        textBlockchain
-            .attr("opacity", 0.4)
 
         svg.selectAll(".pathStep6")
             .remove()
@@ -564,13 +554,13 @@ console.log(selectedStep)
         tooltip
             .attr("class", "tooltip")
             .style("opacity", 1)
-            .text(textStep2)
+            .text(textStep1)
             .style("left","0px")
             .style("top", "0px")
 
 
-        var points = [[firstColMid, secondRow-2], [firstColMid,firstRowMid], [secondCol-2, firstRowMid]]
-        var pathOfLine = lineGenerator(points)
+        var points = [[firstColMid, secondRow-2], [firstColMid,firstRowMid], [firstColMid,firstRowMid], [firstColMid+lineEdgeRadius,firstRowMid], [secondCol-2, firstRowMid]]
+        var pathOfLine = curveGenerator(points)
 
         var pathData =  svg.append('path')
             .attr('d', pathOfLine)
@@ -595,12 +585,12 @@ console.log(selectedStep)
                 .duration(2000)
                 .ease(d3.easeLinear)
                 .attr("stroke-dashoffset", -totalLength)
-    
-    }
 
-    if (selectedStep == 3) {
+}
 
-        pathKeyPairHolderO
+function updateStep2() {
+
+    pathKeyPairHolderO
             .style("opacity", 0)
 
         pathKeyPairHolderP
@@ -621,17 +611,10 @@ console.log(selectedStep)
         pathConHolderIssuer
             .style("opacity", 0)
 
-
-        Blockchain
-            .attr("stroke-width", 0.5)
-
-        textBlockchain
-            .attr("opacity", 0.4)
-
         tooltip
         .attr("class", "tooltip")
         .style("opacity", 1)
-        .text(textStep3)
+        .text(textStep2)
         .style("left","0px")
         .style("top", "0px")
 
@@ -658,19 +641,14 @@ console.log(selectedStep)
             .transition()
             .style("opacity", 1)
             .delay(1000)
-            .duration(5000)     
-    
-    }
+            .duration(5000)    
 
-    if (selectedStep == 4) {
-        
-        Blockchain
-            .attr("stroke-width", 0.5)
 
-        textBlockchain
-            .attr("opacity", 0.4)
+}
 
-        pathKeyPairHolderO
+function updateStep3() {
+
+    pathKeyPairHolderO
             .style("opacity", 1)
 
         pathKeyPairHolderP
@@ -688,19 +666,17 @@ console.log(selectedStep)
         pathConHolderIssuer
             .style("opacity", 0)
 
-
-
         
         tooltip
         .attr("class", "tooltip")
         .style("opacity", 1)
-        .text(textStep4)
+        .text(textStep3)
         .style("left","0px")
         .style("top", "0px")
 
 
-        var points = [[secondCol-2, firstRowMid], [firstColMid,firstRowMid],[firstColMid, secondRow-2] ]
-        var pathOfLine = lineGenerator(points)
+        var points = [[secondCol-2, firstRowMid], [firstColMid+lineEdgeRadius,firstRowMid], [firstColMid,firstRowMid], [firstColMid,firstRowMid+lineEdgeRadius], [firstColMid, secondRow-2] ]
+        var pathOfLine = curveGenerator(points)
 
         var pathData =  svg.append('path')
         .attr('d', pathOfLine)
@@ -732,18 +708,12 @@ console.log(selectedStep)
             .delay(2000)
             .duration(2000)
 
-    
-    }
 
-    if (selectedStep == 5) {
+}
 
-        Blockchain
-            .attr("stroke-width", 0.5)
+function updateStep4() {
 
-        textBlockchain
-            .attr("opacity", 0.4)
-
-        pathKeyPairHolderO
+    pathKeyPairHolderO
             .style("opacity", 1)
 
         pathKeyPairHolderP
@@ -761,7 +731,7 @@ console.log(selectedStep)
         tooltip
         .attr("class", "tooltip")
         .style("opacity", 1)
-        .text(textStep5)
+        .text(textStep4)
         .style("left","0px")
         .style("top", "0px")
 
@@ -787,20 +757,12 @@ console.log(selectedStep)
             .transition()
             .style("opacity", 1)
             .delay(500)
-            .duration(5000)    
-        
-    }
+            .duration(5000)  
+}
 
-    if (selectedStep == 6) {
-      
+function updateStep5() {
 
-        Blockchain
-            .attr("stroke-width", 0.5)
-
-        textBlockchain
-            .attr("opacity", 0.4)
-
-        pathKeyPairHolderO
+    pathKeyPairHolderO
             .style("opacity", 1)
 
         pathKeyPairHolderP
@@ -818,17 +780,16 @@ console.log(selectedStep)
         pathConHolderIssuer
             .style("opacity", 0)
 
-
        
         tooltip
         .attr("class", "tooltip")
         .style("opacity", 1)
-        .text(textStep6)
+        .text(textStep5)
         .style("left","0px")
         .style("top", "0px")
 
-        var points = [[firstColMid, secondRow-2], [firstColMid,firstRowMid], [secondCol-2, firstRowMid]]
-        var pathOfLine = lineGenerator(points)
+        var points = [[firstColMid, secondRow-2], [firstColMid,firstRowMid+lineEdgeRadius], [firstColMid,firstRowMid], [firstColMid+lineEdgeRadius,firstRowMid], [secondCol-2, firstRowMid]]
+        var pathOfLine = curveGenerator(points)
 
         var pathData =  svg.append('path')
         .attr('d', pathOfLine)
@@ -859,20 +820,11 @@ console.log(selectedStep)
             .style("opacity", 1)
             .delay(2000)
             .duration(2000)
-        
+}
 
-    
-    }
+function updateStep6() {
 
-    if (selectedStep == 7) {
-
-        Blockchain
-            .attr("stroke-width", 0.5)
-
-        textBlockchain
-            .attr("opacity", 0.4)
-
-        pathKeyPairHolderO
+    pathKeyPairHolderO
             .style("opacity", 1)
 
         pathKeyPairHolderP
@@ -897,7 +849,7 @@ console.log(selectedStep)
         tooltip
             .attr("class", "tooltip")
             .style("opacity", 1)
-            .text(textStep7)
+            .text(textStep6)
             .style("left","0px")
             .style("top", "0px")
 
@@ -907,255 +859,10 @@ console.log(selectedStep)
             .style("opacity", 0.3)
             .delay(1000)
             .duration(2000)
-    
-    }
-
-    if (selectedStep == 8) {
-
-
-        Blockchain
-            .attr("stroke-width", 0.5)
-
-        textBlockchain
-            .attr("opacity", 0.4)
-    
-        pathKeyPairHolderO
-            .style("opacity", 1)
-
-        pathKeyPairHolderP
-            .style("opacity", 1)
-
-        pathKeyHolderIssuer
-            .style("opacity", 1)
-
-        pathKeyPairIssuerO
-            .style("opacity", 1)
-
-        pathKeyPairIssuerP
-            .style("opacity", 1)
-
-        pathKeyIssuerHolder
-            .style("opacity", 1)
-
-        pathConHolderIssuer
-            .style("opacity", 0.3)
-
-        tooltip
-            .attr("class", "tooltip")
-            .style("opacity", 1)
-            .text(textStep8)
-            .style("left","0px")
-            .style("top", "0px")
-
-        var points = [[firstColEnd+2, secondRowMid], [secondColMid,secondRowMid], [secondColMid, thirdRow-2]]
-        var pathOfLine = lineGenerator(points)
-
-        var pathData =  svg.append('path')
-            .attr('d', pathOfLine)
-            .attr("stroke", jade)
-            .attr("opacity", 0.8)  
-            .attr("stroke-width", 5)
-            .attr("fill", "none")
-            .style('filter', 'url(#glow)')
-
-
-        var totalLength = pathData.node().getTotalLength();
-
-        pathData
-            .attr("stroke-dasharray", totalLength + " " + totalLength)
-            .attr("stroke-dashoffset", totalLength)
-            .transition()
-                .duration(2000)
-                .ease(d3.easeLinear)
-                .attr("stroke-dashoffset", 0)
-            .transition()
-                .delay(2000)
-                .duration(2000)
-                .ease(d3.easeLinear)
-                .attr("stroke-dashoffset", totalLength)
-        
-
-        Blockchain
-            .transition()
-            .delay(1000)
-            .duration(1000)
-            .attr("stroke-width", 3)
-
-
-        textBlockchain
-            .transition()
-            .duration(1000)
-            .attr("opacity", 1)
-
-
-
-
-    }
-    else if (selectedStep == 9)  {
-
-        Blockchain
-            .attr("stroke-width", 3)
-
-        textBlockchain
-            .attr("opacity", 1)
-    
-        pathKeyPairHolderO
-            .style("opacity", 1)
-
-        pathKeyPairHolderP
-            .style("opacity", 1)
-
-        pathKeyHolderIssuer
-            .style("opacity", 1)
-
-        pathKeyPairIssuerO
-            .style("opacity", 1)
-
-        pathKeyPairIssuerP
-            .style("opacity", 1)
-
-        pathKeyIssuerHolder
-            .style("opacity", 1)
-
-        pathConHolderIssuer
-            .style("opacity", 0.3)
-        
-
-    Issuer
-        .transition()
-        .attr("stroke", jade)
-        .attr("stroke-width", 6)
-        .duration(1000)
-        .transition()
-        .delay(5000)
-        .duration(1000)
-        .transition()
-        .attr("stroke", gray)
-        .attr('stroke-width', 3)
-    
-    tooltip
-        .attr("class", "tooltip")
-        .style("opacity", 1)
-        .text(textStep9)
-        .style("left","0px")
-        .style("top", "0px")
-
-    }
-    else if (selectedStep == 10)  {
-
-        pathKeyPairHolderO
-            .style("opacity", 1)
-
-        pathKeyPairHolderP
-            .style("opacity", 1)
-
-        pathKeyHolderIssuer
-            .style("opacity", 1)
-
-        pathKeyPairIssuerO
-            .style("opacity", 1)
-
-        pathKeyPairIssuerP
-            .style("opacity", 1)
-
-        pathKeyIssuerHolder
-            .style("opacity", 1)
-
-        pathConHolderIssuer
-            .style("opacity", 0.3)
-
-    tooltip
-    .attr("class", "tooltip")
-        .style("opacity", 1)
-        .text(textStep10)
-        .style("left","0px")
-        .style("top", "0px")
-
-    var gen = d3.line()
-    var points = [[firstColMid, secondRow-2], [firstColMid,firstRowMid], [secondCol-2, firstRowMid]]
-    var pathOfLine = gen(points)
-
-    var pathData =  svg.append('path')
-        .attr('d', pathOfLine)
-        .attr("stroke", jade)
-        .attr("opacity", 0.8)  
-        .attr("stroke-width", 5)
-        .attr("fill", "none")
-        .style('filter', 'url(#glow)')
-    
-
-    var totalLength = pathData.node().getTotalLength();
-
-    pathData
-        .attr("stroke-dasharray", totalLength + " " + totalLength)
-        .attr("stroke-dashoffset", totalLength)
-        .transition()
-            .duration(2000)
-            .ease(d3.easeLinear)
-            .attr("stroke-dashoffset", 0)
-        .transition()
-            .delay(2000)
-            .duration(2000)
-            .ease(d3.easeLinear)
-            .attr("stroke-dashoffset", -totalLength)
-
-
-    }
-    else if (selectedStep == 11)  {
-
-        pathKeyPairHolderO
-            .style("opacity", 1)
-
-        pathKeyPairHolderP
-            .style("opacity", 1)
-
-        pathKeyHolderIssuer
-            .style("opacity", 1)
-
-        pathKeyPairIssuerO
-            .style("opacity", 1)
-
-        pathKeyPairIssuerP
-            .style("opacity", 1)
-
-        pathKeyIssuerHolder
-            .style("opacity", 1)
-
-        pathConHolderIssuer
-            .style("opacity", 0.3)
-
-    Holder
-        .transition()
-        .attr("stroke", jade)
-        .attr("stroke-width", 6)
-        .duration(1000)
-        .transition()
-        .delay(5000)
-        .duration(1000)
-        .transition()
-        .attr("stroke", gray)
-        .attr('stroke-width', 3)
-    
-    tooltip
-    .attr("class", "tooltip")
-        .style("opacity", 1)
-        .text(textStep11)
-        .style("left","0px")
-        .style("top", "0px")   
-
-
-    pathKeyIssuerHolder
-        .attr("transform", "translate("+(secondColMid+20)+","+(firstRowMid+10)+")")
-
-    
-    
-    }
-    
 }
 
+document.getElementById("radioStep0").checked = true;
 selectedStep = 0
-document.getElementById("vcProcessSlider").value = 0;
-
 </script>
 
 </body>

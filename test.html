@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+  
+<body style="text-align: center;">
+    <h1 style="color: green;">
+        GeeksforGeeks
+    </h1>
+    <h4>
+        How to count the number of
+        times a button is clicked?
+    </h4>
+    <button id="btnfw">Forward</button>
+    <p>
+        Forward Button Clicked <span id="displayfw">0</span> Times
+    </p>
+    <button id="btnbw">Backward</button>
+    <p>
+        Backward Button Clicked <span id="displaybw">0</span> Times
+    </p>
+<script src="https://d3js.org/d3.v6.min.js"></script>
+
+    <script type="text/javascript">
+        var countfw = 0;
+        var btnfw = document.getElementById("btnfw");
+        var dispfw = document.getElementById("displayfw");
+
+        var countbw = 0;
+        var btnbw = document.getElementById("btnbw");
+        var dispbw = document.getElementById("displaybw");
+    
+        let fwInARow = 0
+        let bwInARow = 0
+        let actualStep = 0
+
+       d3.select("#btnfw").on("click", function(){
+        if(actualStep > 5) {
+            actualStep = 5
+        } else if(actualStep < 0) {
+            actualStep = 0
+        } else if(actualStep < 5){
+        countfw++
+        fwInARow = countfw
+        console.log(fwInARow)
+        console.log(countbw)
+        actualStep = fwInARow-bwInARow
+        }
+        console.log("Actul Step " + actualStep)
+       });
+
+       d3.select("#btnbw").on("click", function(){
+        if(actualStep > 5) {
+            actualStep=5
+        } else if(actualStep < 0) {
+            actualStep = 0
+        } else if(actualStep < 5) {
+        countbw++
+        bwInARow = countbw
+        console.log(bwInARow)
+        console.log(countfw)
+        actualStep = fwInARow-bwInARow
+       }
+       console.log("Actul Step " + actualStep)
+       });
+
+
+/*
+        function updateKlickfw() {
+                    countfw++;
+        dispfw.innerHTML = countfw;
+        var test = countfw
+        }
+
+        function eraseKlickfw() {
+                countfw = 0
+        }
+
+        btnbw.onclick = function () {
+                    countbw++;
+        dispbw.innerHTML = countbw;
+        }
+*/
+    </script>
+</body>
+  
+</html>
