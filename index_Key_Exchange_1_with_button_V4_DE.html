@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      /*------*/
+      /* Grid */
+      /*------*/
+
+      .wrapperKEDE {
+        display: grid;
+        grid-column-gap: 20px;
+        grid-template-columns: 49% 49%;
+        grid-template-rows: 50px 1fr;
+      }
+
+      @font-face {
+        font-family: educaSans;
+        src: url(Educa_Sans_Webfonts/EducaSans-Regular.woff2);
+      }
+
+      /*---------------*/
+      /* Text in Boxes */
+      /*---------------*/
+
+      .stepButtonsKEDE,
+      .textLegendKEDE,
+      .tooltipKEDE {
+        font-size: 3vw;
+        font-family: educaSans, Arial, sans-serif;
+      }
+
+      @media screen and (min-width: 480px) {
+        .stepButtonsKEDE,
+        .textLegendKEDE,
+        .tooltipKEDE {
+          font-size: 12pt;
+          font-family: educaSans, Arial, sans-serif;
+        }
+      }
+
+      .textIssuerKEDE,
+      .textHolderKEDE,
+      .textBlockchainKEDE,
+      .textVerifierKEDE {
+        font-size: 12pt;
+        font-family: educaSans, Arial, sans-serif;
+        fill: #2c4262;
+        text-anchor: middle;
+      }
+
+      #divTooltipKEDE {
+        font-size: 13pt;
+        font-family: educaSans, Arial, sans-serif;
+        fill: #2c4262;
+        font-style: italic;
+        grid-row: -1/-1;
+        grid-column: 1/-1;
+        padding-right: 2rem;
+        padding-left: 1rem;
+      }
+
+      /*--------------------------------*/
+      /* Formating of the SVG Container */
+      /*--------------------------------*/
+
+      .svg-containerKEDE {
+        display: inline-block;
+        position: relative;
+        vertical-align: top;
+        overflow: hidden;
+        grid-row: 2/2;
+        grid-column: 1/-1;
+        margin-right: 20px;
+      }
+
+      /*-----------------------*/
+      /* Formating the buttons */
+      /*-----------------------*/
+
+      .stepButtonsKEDE {
+        background-color: rgba(82, 156, 154, 0.7);
+        border-radius: 8px;
+        border-style: none;
+        min-width: 5em;
+        max-width: 7em;
+        box-sizing: border-box;
+        color: white;
+        cursor: pointer;
+        display: inline-block;
+        height: 2em;
+        list-style: none;
+        margin-top: 5px;
+        outline: none;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        transition: color 100ms;
+        vertical-align: baseline;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      @media screen and (min-width: 480px) {
+        .stepButtonsKEDE {
+          min-width: 120px;
+          max-width: 120px;
+          height: 40px;
+        }
+      }
+
+      .stepButtonsKEDE:hover {
+        background-color: rgba(82, 156, 154, 1);
+        color: white;
+      }
+
+      .stepButtonsKEDE:disabled {
+        background-color: #ccc4c2;
+        color: white;
+      }
+
+      #buttonsContainerBwKEDE {
+        grid-column: 1/1;
+        grid-row: 1/1;
+        justify-self: end;
+      }
+
+      #buttonsContainerFwKEDE {
+        grid-column: 2/-1;
+        grid-row: 1/1;
+      }
+    </style>
+  </head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+
+  <body>
+    <div class="wrapperKEDE">
+      <div id="buttonsContainerBwKEDE">
+        <button id="btnbwKEDE" class="stepButtonsKEDE">zurück</button>
+      </div>
+      <div id="buttonsContainerFwKEDE">
+        <button id="btnfwKEDE" class="stepButtonsKEDE">vorwärts</button>
+      </div>
+      <div id="canvasKEDE" class="svg-containerKEDE"></div>
+      <div id="divTooltipKEDE"></div>
+    </div>
+
+    <script>
+      /*-----------------------*/
+      /* Definition Dimensions */
+      /*-----------------------*/
+
+      var rectWidth = 180;
+      var rectHight = rectWidth / 1.618;
+      var firstRow = 10;
+      var colWidth = 20;
+      var secondRow = firstRow + rectHight + colWidth;
+      var thirdRow = secondRow + rectHight + colWidth;
+      var firstCol = 10;
+      var secondCol = firstCol + rectWidth + colWidth;
+      var thirdCol = secondCol + rectWidth + colWidth;
+      var blockWidth = thirdCol + rectWidth - firstCol;
+      var firstRowMid = firstRow + rectHight / 2;
+      var secondRowMid = secondRow + rectHight / 2;
+      var thirdRowMid = thirdRow + rectHight / 2;
+      var firstColMid = firstCol + rectWidth / 2;
+      var secondColMid = secondCol + rectWidth / 2;
+      var thirdColMid = thirdCol + rectWidth / 2;
+      var firstRowEnd = firstRow + rectHight;
+      var secondRowEnd = secondRow + rectHight;
+      var thirdRowEnd = thirdRow + rectHight;
+      var firstColEnd = firstCol + rectWidth;
+      var secondColEnd = secondCol + rectWidth;
+      var thirdColEnd = thirdCol + rectWidth;
+      var cornerRadius = 3;
+      var lineEdgeRadius = 5;
+      var duration = 1000;
+      var delay1 = 1000;
+      var delay2 = 2000;
+      var blockButton = 4000;
+
+      /*---------------------------*/
+      /* Definition Line Generator */
+      /*---------------------------*/
+
+      var lineGenerator = d3.line();
+      var curveGenerator = d3.line().curve(d3.curveBundle.beta(1));
+
+      /*-------------------*/
+      /* Definition Colors */
+      /*-------------------*/
+
+      var jade = "#529c9a";
+      var rubin = "#cd003a";
+      var kobalt = "#2c4262";
+      var saphire = "#101a3a";
+      var gray = "#ccc4c2";
+      var quarz = "#c69e8e";
+      var bernstein = "#f0c84a";
+      var amethyst = "#5e4458";
+      var granat = "#940a2d";
+
+      /*--------------*/
+      /* Generate SVG */
+      /*--------------*/
+
+      var svgKEDE = d3
+        .select("div#canvasKEDE")
+        .append("svg")
+        .attr("viewBox", "0 0 600 390")
+        .attr("preserveAspectRatio", "xMinYMin meet");
+
+      /*------------*/
+      /* Rectangles */
+      /*------------*/
+
+      /*
+Rectangle Issuer
+*/
+
+      var IssuerKEDE = svgKEDE
+        .append("rect")
+        .attr("class", "issuer")
+        .attr("x", firstCol)
+        .attr("y", secondRow)
+        .attr("width", rectWidth)
+        .attr("height", rectHight)
+        .attr("fill", gray)
+        .attr("fill-opacity", 0.2)
+        .attr("stroke", gray)
+        .attr("stroke-width", 3)
+        .attr("rx", cornerRadius);
+
+      var textIssuerKEDE = svgKEDE
+        .append("text")
+        .text("Ausgabestelle")
+        .attr("class", "textIssuerKEDE")
+        .attr("x", firstCol + rectWidth / 2)
+        .attr("y", secondRow + rectHight / 2);
+
+      /*
+Rectangle Holder
+*/
+
+      var HolderKEDE = svgKEDE
+        .append("rect")
+        .attr("class", "Holder")
+        .attr("x", secondCol)
+        .attr("y", firstRow)
+        .attr("width", rectWidth)
+        .attr("height", rectHight)
+        .attr("fill", gray)
+        .attr("fill-opacity", 0.2)
+        .attr("stroke", gray)
+        .attr("stroke-width", 3)
+        .attr("rx", cornerRadius);
+
+      var textHolderKEDE = svgKEDE
+        .append("text")
+        .text("Inhaberin")
+        .attr("class", "textHolderKEDE")
+        .attr("x", secondCol + rectWidth / 2)
+        .attr("y", firstRow + rectHight / 2);
+
+      /*
+Rectangle Blockchain
+*/
+
+      var BlockchainKEDE = svgKEDE
+        .append("rect")
+        .attr("class", "blockchain")
+        .attr("x", firstCol)
+        .attr("y", thirdRow)
+        .attr("width", blockWidth)
+        .attr("height", rectHight)
+        .attr("fill", gray)
+        .attr("fill-opacity", 0.2)
+        .attr("stroke", gray)
+        .attr("stroke-width", 0.5)
+        .attr("rx", cornerRadius);
+
+      var textBlockchainKEDE = svgKEDE
+        .append("text")
+        .text("Dezentraler Datenspeicher")
+        .attr("class", "textBlockchainKEDE")
+        .attr("x", secondCol + rectWidth / 2)
+        .attr("y", thirdRow + rectHight / 2.5)
+        .attr("opacity", 0.4);
+
+      var textBlockchainKEDE = svgKEDE
+        .append("text")
+        .text("(z.B. Blockchain)")
+        .attr("class", "textBlockchainKEDE")
+        .attr("x", secondCol + rectWidth / 2)
+        .attr("y", thirdRow + rectHight / 1.5)
+        .attr("opacity", 0.4);
+
+      /*
+Rectangle Verifier
+*/
+      var VerifierKEDE = svgKEDE
+        .append("rect")
+        .attr("class", "verifier")
+        .attr("x", thirdCol)
+        .attr("y", secondRow)
+        .attr("width", rectWidth)
+        .attr("height", rectHight)
+        .attr("fill", gray)
+        .attr("fill-opacity", 0.2)
+        .attr("stroke", gray)
+        .attr("stroke-width", 0.5)
+        .attr("rx", cornerRadius);
+
+      var textVerifierKEDE1 = svgKEDE
+        .append("text")
+        .text("Überprüfungsstelle")
+        .attr("class", "textVerifierKEDE")
+        .attr("x", thirdCol + rectWidth / 2)
+        .attr("y", secondRow + rectHight / 2)
+        .attr("opacity", 0.4);
+
+      /*-------------*/
+      /* Define Text */
+      /*-------------*/
+
+      var textStepKEDE0 =
+        "Ausgangslage: Die Ausgabestelle möchte eine direkte und verschlüsselte Verbindung zur Inhaberin herstellen, z.B. damit sie später einen digitalen Nachweis über diese Verbindung ausstellen kann. Die nachfolgenden Schritte zeigen diesen Prozess im Detail. Dabei spielen sich die Schritte zumeist sekundenschnell im Hintergrund ab, werden hier aber zum besseren Verständnis aufgedröselt.";
+      var textStepKEDE1 =
+        "Schritt 1: Für den Verbindungsaufbau übergibt die Ausgabestelle der Inhaberin eine Verbindungseinladung, z.B. in Form eines QR-Codes.";
+      var textStepKEDE2 =
+        "Schritt 2: Die Inhaberin scannt den QR-Code mit ihrem Handy und nimmt die Verbindungseinladung an. Dann wird im Hintergrund ein Schlüsselpaar generiert, bestehend aus einem privaten (violet) und öffentlichen (gelb) Schlüssel. Dieses Schlüsselpaar ist verbindungsspezifisch.";
+      var textStepKEDE3 =
+        "Schritt 3: Eine Kopie des öffentlichen Schlüssel (gelb) wird mit der Nachricht über die Annahme der Verbindungseinladung an die Ausgabestelle übermittelt und in deren elektronischer Brieftasche gespeichert. Der private Schlüssel (violet) bleibt in der elektronischen Brieftasche der Inhaberin.";
+      var textStepKEDE4 =
+        "Schritt 4: Auch bei der Ausgabestelle wird nun ein Schlüsselpaar für die Verbindung generiert, mit privatem (violet) und öffentlichem (gelb) Schlüssel.";
+      var textStepKEDE5 =
+        "Schritt 5: Während der private Schlüssel in der elektronischen Brieftasche der Ausgabestelle bleibt, wird eine Kopie des öffentlichen Schlüssels und die Bestätigung des Verbindungsaufbaus an die Inhaberin versandt. Die Kopie des öffentlichen Schlüssels (gelb) kommt in die elektronische Brieftasche der Inhaberin.";
+      var textStepKEDE6 =
+        "Resultat: Nun besteht eine direkte und verschlüsselte Verbindung zwischen Ausgabestelle und Inhaberin, über die digitale Nachweise und Nachrichten ausgetauscht werden können.";
+
+      var tooltipKEDE = d3
+        .select("#divTooltipKEDE")
+        .append("tooltipKEDE")
+        .attr("class", "tooltipKEDE")
+        .style("opacity", 0);
+
+      /*------*/
+      /* Glow */
+      /*------*/
+
+      const defsKEDE = svgKEDE.append("defs");
+      const glowDeviationKEDE = "1.5";
+
+      // Filter for the outside glow
+      const filterKEDE = defsKEDE.append("filter").attr("id", "glow");
+      filterKEDE
+        .append("feGaussianBlur")
+        .attr("stdDeviation", glowDeviationKEDE)
+        .attr("result", "coloredBlur");
+
+      const feMergeKEDE = filterKEDE.append("feMergeKEDE");
+      feMergeKEDE.append("feMergeKEDENode").attr("in", "coloredBlur");
+      feMergeKEDE.append("feMergeKEDENode").attr("in", "SourceGraphic");
+
+      /*------*/
+      /* Keys */
+      /*------*/
+
+      // Generierung Schlüssel Holder
+      var keyPairHolderPKEDE = [
+        [0, 30],
+        [10, 30],
+        [10, 20],
+        [20, 20],
+        [20, 10],
+        [10, 10],
+        [10, 0],
+        [0, 0],
+      ];
+      var linekeyPairHolderPKEDE = lineGenerator(keyPairHolderPKEDE);
+      var pathkeyPairHolderPKEDE = svgKEDE
+        .append("path")
+        .attr("d", linekeyPairHolderPKEDE)
+        .attr("fill", amethyst)
+        .style("opacity", 0)
+        .attr(
+          "transform",
+          "translate(" + (secondColMid - 60) + "," + (firstRowMid + 10) + ")"
+        );
+
+      var keyPairHolderOKEDE = [
+        [30, 30],
+        [30, 0],
+        [10, 0],
+        [10, 10],
+        [20, 10],
+        [20, 20],
+        [10, 20],
+        [10, 30],
+      ];
+      var linekeyPairHolderOKEDE = lineGenerator(keyPairHolderOKEDE);
+      var pathkeyPairHolderOKEDE = svgKEDE
+        .append("path")
+        .attr("d", linekeyPairHolderOKEDE)
+        .attr("fill", bernstein)
+        .style("opacity", 0)
+        .attr(
+          "transform",
+          "translate(" + (secondColMid - 60) + "," + (firstRowMid + 10) + ")"
+        );
+
+      // Öffentlicher Schlüssel Holder bei Issuer
+      var pathKeyHolderIssuerKEDE = svgKEDE
+        .append("path")
+        .attr("d", linekeyPairHolderOKEDE)
+        .attr("fill", bernstein)
+        .style("opacity", 0)
+        .attr(
+          "transform",
+          "translate(" + (firstColMid + 20) + "," + (secondRowMid + 10) + ")"
+        );
+
+      // Generierung Schlüssel Issuer
+      var keyPairIssuerPKEDE = [
+        [0, 30],
+        [30, 30],
+        [30, 20],
+        [10, 20],
+        [10, 10],
+        [0, 10],
+      ];
+      var linekeyPairIssuerPKEDE = lineGenerator(keyPairIssuerPKEDE);
+      var pathkeyPairIssuerPKEDE = svgKEDE
+        .append("path")
+        .attr("d", linekeyPairIssuerPKEDE)
+        .attr("fill", amethyst)
+        .style("opacity", 0)
+        .attr(
+          "transform",
+          "translate(" + (firstColMid - 60) + "," + (secondRowMid + 10) + ")"
+        );
+
+      var keyPairIssuerOKEDE = [
+        [0, 0],
+        [0, 10],
+        [10, 10],
+        [10, 20],
+        [30, 20],
+        [30, 0],
+      ];
+      var linekeyPairIssuerOKEDE = lineGenerator(keyPairIssuerOKEDE);
+      var pathkeyPairIssuerOKEDE = svgKEDE
+        .append("path")
+        .attr("d", linekeyPairIssuerOKEDE)
+        .attr("fill", bernstein)
+        .style("opacity", 0)
+        .attr(
+          "transform",
+          "translate(" + (firstColMid - 60) + "," + (secondRowMid + 10) + ")"
+        );
+
+      // Öffentlicher Schlüssel Issuer bei Holder
+
+      var pathKeyIssuerHolderKEDE = svgKEDE
+        .append("path")
+        .attr("d", linekeyPairIssuerOKEDE)
+        .attr("fill", bernstein)
+        .style("opacity", 0)
+        .attr(
+          "transform",
+          "translate(" + (secondColMid + 20) + "," + (firstRowMid + 10) + ")"
+        );
+
+      /*---------------------------------------*/
+      /* Direkte und verschlüsselte Verbindung */
+      /*---------------------------------------*/
+
+      var conHolderIssuerKEDE = [
+        [firstColMid, secondRow - 2],
+        [firstColMid, firstRowMid + lineEdgeRadius],
+        [firstColMid, firstRowMid],
+        [firstColMid + lineEdgeRadius, firstRowMid],
+        [secondCol - 2, firstRowMid],
+      ];
+      var lineconHolderIssuerKEDE = curveGenerator(conHolderIssuerKEDE);
+
+      var pathconHolderIssuerKEDE = svgKEDE
+        .append("path")
+        .attr("class", "pathStep7")
+        .attr("d", lineconHolderIssuerKEDE)
+        .attr("stroke", quarz)
+        .attr("stroke-width", 20)
+        .attr("fill", "none")
+        .style("opacity", 0);
+
+      /*------------------*/
+      /* Datenübertragung */
+      /*------------------*/
+
+      /*Issuer zu Holder*/
+
+      var pointsIssuerHolderKEDE = [
+        [firstColMid, secondRow - 2],
+        [firstColMid, firstRowMid],
+        [firstColMid, firstRowMid],
+        [firstColMid + lineEdgeRadius, firstRowMid],
+        [secondCol - 2, firstRowMid],
+      ];
+      var pathOfLineIssuerHolderKEDE = curveGenerator(pointsIssuerHolderKEDE);
+
+      var pathDataIssuerHolderKEDE = svgKEDE
+        .append("path")
+        .attr("d", pathOfLineIssuerHolderKEDE)
+        .attr("stroke", jade)
+        .attr("opacity", 0)
+        .attr("stroke-width", 5)
+        .attr("fill", "none")
+        .style("filter", "url(#glow)");
+
+      var totalLengthIssuerHolderKEDE = pathDataIssuerHolderKEDE
+        .node()
+        .getTotalLength();
+
+      /*Holder zu Issuer*/
+      var pointsHolderIssuerKEDE = [
+        [secondCol - 2, firstRowMid],
+        [firstColMid + lineEdgeRadius, firstRowMid],
+        [firstColMid, firstRowMid],
+        [firstColMid, firstRowMid + lineEdgeRadius],
+        [firstColMid, secondRow - 2],
+      ];
+      var pathOfLineHolderIssuerKEDE = curveGenerator(pointsHolderIssuerKEDE);
+
+      var pathDataHolderIssuerKEDE = svgKEDE
+        .append("path")
+        .attr("d", pathOfLineHolderIssuerKEDE)
+        .attr("stroke", jade)
+        .attr("opacity", 0)
+        .attr("stroke-width", 5)
+        .attr("fill", "none")
+        .style("filter", "url(#glow)");
+
+      var totalLengthHolderIssuerKEDE = pathDataHolderIssuerKEDE
+        .node()
+        .getTotalLength();
+
+      /*--------------------------------------*/
+      /* Variables for Event Listener Buttons */
+      /*--------------------------------------*/
+
+      var countfwKEDE = 0;
+      var btnfwKEDE = document.getElementById("btnfwKEDE");
+
+      var countbwKEDE = 0;
+      var btnbwKEDE = document.getElementById("btnbwKEDE");
+
+      var fwInARowKEDE = 0;
+      var bwInARowKEDE = 0;
+      var actualStepKEDE = 0;
+
+      btnbwKEDE.disabled = true;
+
+      /*---------*/
+      /* Tooltip */
+      /*---------*/
+
+      tooltipKEDE
+        .attr("class", "tooltipKEDE")
+        .style("opacity", 1)
+        .text(textStepKEDE0)
+        .style("left", "0px")
+        .style("top", "0px");
+
+      /*--------------------------------*/
+      /* Update function forward button */
+      /*--------------------------------*/
+
+      d3.select("#btnfwKEDE").on("click", function () {
+        if (actualStepKEDE >= 0 && actualStepKEDE < 6) {
+          countfwKEDE++;
+          fwInARowKEDE = countfwKEDE;
+          actualStepKEDE = fwInARowKEDE - bwInARowKEDE;
+        } else if (actualStepKEDE < 0) {
+          actualStepKEDE = 0;
+        } else if (actualStepKEDE > 6) {
+          actualStepKEDE = 6;
+        }
+
+        if (actualStepKEDE == 0) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 0);
+
+          pathkeyPairHolderPKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE0)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = true;
+          }, 500);
+        } else if (actualStepKEDE == 1) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 0);
+
+          pathkeyPairHolderPKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          svgKEDE.selectAll(".pathStep6").remove();
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE1)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathDataIssuerHolderKEDE
+            .attr(
+              "stroke-dasharray",
+              totalLengthIssuerHolderKEDE + " " + totalLengthIssuerHolderKEDE
+            )
+            .attr("stroke-dashoffset", totalLengthIssuerHolderKEDE)
+            .transition()
+            .style("opacity", 0.8)
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", -totalLengthIssuerHolderKEDE);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 4000);
+        } else if (actualStepKEDE == 2) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 0);
+
+          pathkeyPairHolderPKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE2)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          HolderKEDE.transition()
+            .attr("stroke", jade)
+            .attr("stroke-width", 6)
+            .duration(1000)
+            .transition()
+            .delay(3000)
+            .duration(1000)
+            .transition()
+            .attr("stroke", gray)
+            .attr("stroke-width", 3);
+
+          pathkeyPairHolderOKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(4000);
+
+          pathkeyPairHolderPKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(4000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 6000);
+        } else if (actualStepKEDE == 3) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE3)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathDataHolderIssuerKEDE
+            .attr(
+              "stroke-dasharray",
+              totalLengthHolderIssuerKEDE + " " + totalLengthHolderIssuerKEDE
+            )
+            .attr("stroke-dashoffset", totalLengthHolderIssuerKEDE)
+            .transition()
+            .style("opacity", 0.8)
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", -totalLengthHolderIssuerKEDE);
+
+          pathKeyHolderIssuerKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(2000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 4000);
+        } else if (actualStepKEDE == 4) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 1);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE4)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          IssuerKEDE.transition()
+            .attr("stroke-width", 6)
+            .attr("stroke", jade)
+            .duration(1000)
+            .transition()
+            .delay(3000)
+            .duration(1000)
+            .transition()
+            .attr("stroke-width", 3)
+            .attr("stroke", gray);
+
+          pathkeyPairIssuerOKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(500)
+            .duration(3000);
+
+          pathkeyPairIssuerPKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(500)
+            .duration(3000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 6000);
+        } else if (actualStepKEDE == 5) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 1);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE5)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathDataIssuerHolderKEDE
+            .attr(
+              "stroke-dasharray",
+              totalLengthIssuerHolderKEDE + " " + totalLengthIssuerHolderKEDE
+            )
+            .attr("stroke-dashoffset", totalLengthIssuerHolderKEDE)
+            .transition()
+            .style("opacity", 0.8)
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", -totalLengthIssuerHolderKEDE);
+
+          pathKeyIssuerHolderKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(2000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 4000);
+        } else if (actualStepKEDE == 6) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 1);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 1);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE6)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathconHolderIssuerKEDE
+            .transition()
+            .style("opacity", 0.3)
+            .delay(1000)
+            .duration(2000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = true;
+            btnbwKEDE.disabled = false;
+          }, blockButton);
+        }
+      });
+
+      /*---------------------------------*/
+      /* Update function backward button */
+      /*---------------------------------*/
+
+      d3.select("#btnbwKEDE").on("click", function () {
+        if (actualStepKEDE > 0 && actualStepKEDE <= 6) {
+          countbwKEDE++;
+          bwInARowKEDE = countbwKEDE;
+          actualStepKEDE = fwInARowKEDE - bwInARowKEDE;
+        } else if (actualStepKEDE < 0) {
+          actualStepKEDE = 0;
+        } else if (actualStepKEDE > 6) {
+          actualStepKEDE = 6;
+        }
+
+        if (actualStepKEDE == 0) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 0);
+
+          pathkeyPairHolderPKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE0)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = true;
+          }, 500);
+        } else if (actualStepKEDE == 1) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 0);
+
+          pathkeyPairHolderPKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          svgKEDE.selectAll(".pathStep6").remove();
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE1)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathDataIssuerHolderKEDE
+            .attr(
+              "stroke-dasharray",
+              totalLengthIssuerHolderKEDE + " " + totalLengthIssuerHolderKEDE
+            )
+            .attr("stroke-dashoffset", totalLengthIssuerHolderKEDE)
+            .transition()
+            .style("opacity", 0.8)
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", -totalLengthIssuerHolderKEDE);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 4000);
+        } else if (actualStepKEDE == 2) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 0);
+
+          pathkeyPairHolderPKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE2)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          HolderKEDE.transition()
+            .attr("stroke", jade)
+            .attr("stroke-width", 6)
+            .duration(1000)
+            .transition()
+            .delay(3000)
+            .duration(1000)
+            .transition()
+            .attr("stroke", gray)
+            .attr("stroke-width", 3);
+
+          pathkeyPairHolderOKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(4000);
+
+          pathkeyPairHolderPKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(4000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 6000);
+        } else if (actualStepKEDE == 3) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE3)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathDataHolderIssuerKEDE
+            .attr(
+              "stroke-dasharray",
+              totalLengthHolderIssuerKEDE + " " + totalLengthHolderIssuerKEDE
+            )
+            .attr("stroke-dashoffset", totalLengthHolderIssuerKEDE)
+            .transition()
+            .style("opacity", 0.8)
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", -totalLengthHolderIssuerKEDE);
+
+          pathKeyHolderIssuerKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(2000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 4000);
+        } else if (actualStepKEDE == 4) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 1);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 0);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE4)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          IssuerKEDE.transition()
+            .attr("stroke-width", 6)
+            .attr("stroke", jade)
+            .duration(1000)
+            .transition()
+            .delay(3000)
+            .duration(1000)
+            .transition()
+            .attr("stroke-width", 3)
+            .attr("stroke", gray);
+
+          pathkeyPairIssuerOKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(500)
+            .duration(3000);
+
+          pathkeyPairIssuerPKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(500)
+            .duration(3000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 6000);
+        } else if (actualStepKEDE == 5) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 1);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE5)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathDataIssuerHolderKEDE
+            .attr(
+              "stroke-dasharray",
+              totalLengthIssuerHolderKEDE + " " + totalLengthIssuerHolderKEDE
+            )
+            .attr("stroke-dashoffset", totalLengthIssuerHolderKEDE)
+            .transition()
+            .style("opacity", 0.8)
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0)
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", -totalLengthIssuerHolderKEDE);
+
+          pathKeyIssuerHolderKEDE
+            .transition()
+            .style("opacity", 1)
+            .delay(1000)
+            .duration(2000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = false;
+            btnbwKEDE.disabled = false;
+          }, 4000);
+        } else if (actualStepKEDE == 6) {
+          btnfwKEDE.disabled = true;
+          btnbwKEDE.disabled = true;
+
+          pathkeyPairHolderOKEDE.style("opacity", 1);
+
+          pathkeyPairHolderPKEDE.style("opacity", 1);
+
+          pathKeyHolderIssuerKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerOKEDE.style("opacity", 1);
+
+          pathkeyPairIssuerPKEDE.style("opacity", 1);
+
+          pathKeyIssuerHolderKEDE.style("opacity", 1);
+
+          pathconHolderIssuerKEDE.style("opacity", 0);
+
+          tooltipKEDE
+            .attr("class", "tooltipKEDE")
+            .style("opacity", 1)
+            .text(textStepKEDE6)
+            .style("left", "0px")
+            .style("top", "0px");
+
+          pathconHolderIssuerKEDE
+            .transition()
+            .style("opacity", 0.3)
+            .delay(1000)
+            .duration(2000);
+
+          setTimeout(function () {
+            btnfwKEDE.disabled = true;
+            btnbwKEDE.disabled = false;
+          }, blockButton);
+        }
+      });
+    </script>
+  </body>
+</html>
