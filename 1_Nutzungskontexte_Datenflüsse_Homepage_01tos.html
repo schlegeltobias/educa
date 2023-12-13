@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      /*------*/
+      /* Grid */
+      /*------*/
+
+      .wrapperNKDFDE {
+        display: grid;
+        grid-column-gap: 20px;
+        grid-template-rows: 50px 100px 1fr;
+        grid-template-columns: minmax(56%, auto) minmax(49%, auto) auto;
+      }
+
+      /*----------------------*/
+      /* Import Educa Schrift */
+      /*----------------------*/
+
+      /*@font-face bis und mit geschwungener Klammer für Einbettung auf Homepage rauslöschen*/
+
+      @font-face {
+        font-family: educaSans;
+        src: url(Educa_Sans_Webfonts/EducaSans-Regular.woff2);
+      }
+
+      /*---------------*/
+      /* Text in Boxes */
+      /*---------------*/
+
+      .iconsTextNKDFDE {
+        font-size: 10pt;
+        font-family: educaSans, Arial, sans-serif;
+      }
+
+      @media screen and (min-width: 480px) {
+        .iconsTextNKDFDE {
+          font-size: 0.5rem;
+          font-family: educaSans, Arial, sans-serif;
+        }
+      }
+
+      #titleDropdownNKDFDE,
+      .tooltipNKDFDE,
+      .legendLabelNKDFDE {
+        font-size: 3vw;
+        font-family: educaSans, Arial, sans-serif;
+      }
+
+      @media screen and (min-width: 480px) {
+        #titleDropdownNKDFDE,
+        .tooltipNKDFDE,
+        .legendLabelNKDFDE {
+          font-size: 10pt;
+          font-family: educaSans, Arial, sans-serif;
+        }
+      }
+
+      #titleDropdownNKDFDE {
+        font-weight: 700;
+        grid-column: 1/-1;
+        grid-row: 1/1;
+      }
+
+      .textVerifierNKDFDE {
+        text-anchor: middle;
+      }
+
+      /*-----------------------------*/
+      /* Formating the radio buttons */
+      /*-----------------------------*/
+
+      #dropdownContainerDE {
+        grid-column: 1/2;
+        grid-row: 2/2;
+      }
+
+      #dropdownContainerDE select {
+        /* Remove default border */
+        border: none;
+        outline: none;
+        background-color: #f0eded;
+        padding: 10px;
+        border-radius: 2px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Style for the dropdown arrow */
+      #dropdownContainerDE select::-ms-expand {
+        display: none;
+        border: none;
+        outline: none;
+      }
+
+      #dropdownContainerDE select::after {
+        content: "\25BC"; /* Unicode character for down arrow */
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        border: none;
+        outline: none;
+      }
+
+      /*--------------------------------*/
+      /* Formating of the SVG Container */
+      /*--------------------------------*/
+
+      .svg-containerNKDFDE {
+        display: inline-block;
+        position: relative;
+        max-width: 3000px;
+        vertical-align: top;
+        overflow: hidden;
+        grid-row: 3/3;
+        grid-column: 1/-1;
+        margin-right: 20px;
+      }
+
+      .svg-contentNKDFDE {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        grid-column: 1/-1;
+      }
+
+      .pathStatusQuoDE {
+        border-radius: 10px;
+      }
+
+      .tooltipNKDFDE {
+        position: absolute;
+        background-color: #f0eded;
+        border: 0px;
+        padding: 10px;
+        border-radius: 0px;
+        pointer-events: none;
+      }
+
+      /*----------------------*/
+      /* Formating the Legend */
+      /*----------------------*/
+
+      #legendNKDFDE {
+        grid-column: 2/3;
+        grid-row: 2/3;
+      }
+
+      .legendLabelNKDFDE {
+        display: block;
+        position: relative;
+        padding-left: 40px;
+        margin-bottom: 12px;
+      }
+
+      #legendMarkerVorhandenDE {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 10px;
+        width: 30px;
+        background-color: #529c9a;
+      }
+
+      @media screen and (min-width: 480px) {
+        #legendMarkerVorhandenDE {
+          position: absolute;
+          top: 6px;
+          left: 0;
+          height: 10px;
+          width: 30px;
+          background-color: #529c9a;
+        }
+      }
+
+      #legendMarkerKaumDE {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 10px;
+        width: 30px;
+        background-color: #f0c84a;
+      }
+
+      @media screen and (min-width: 480px) {
+        #legendMarkerKaumDE {
+          position: absolute;
+          top: 6px;
+          left: 0;
+          height: 10px;
+          width: 30px;
+          background-color: #f0c84a;
+        }
+      }
+
+      #legendMarkerKeineDE {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 10px;
+        width: 30px;
+        background-color: #cd003a;
+      }
+
+      @media screen and (min-width: 480px) {
+        #legendMarkerKeineDE {
+          position: absolute;
+          top: 6px;
+          left: 0;
+          height: 10px;
+          width: 30px;
+          background-color: #cd003a;
+        }
+      }
+    </style>
+  </head>
+
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+
+  <body>
+    <div class="wrapperNKDFDE">
+      <p id="titleDropdownNKDFDE">
+        Wählen Sie die Perspektive ihres Nutzungskontextes
+      </p>
+      <div id="dropdownContainerDE">
+        <select id="perspectiveDropdownDE" onchange="updatePerspectiveNKDFDE()">
+          <option value="6">Lehren & Lernen</option>
+          <option value="5">Bildungsverwaltung & Schulorganisation</option>
+          <option value="4">Bildungspolitik & -steuerung</option>
+          <option value="3">Bildungsmarkt</option>
+          <option value="2">Bildungsforschung</option>
+          <option value="1">Andere Sektoren</option>
+        </select>
+      </div>
+
+      <div id="legendNKDFDE">
+        <p>
+          <label class="legendLabelNKDFDE"
+            >Vorhandene Datenflüsse
+            <span id="legendMarkerVorhandenDE"></span>
+          </label>
+        </p>
+        <p>
+          <label class="legendLabelNKDFDE"
+            >Kaum Datenflüsse
+            <span id="legendMarkerKaumDE"></span>
+          </label>
+        </p>
+        <p>
+          <label class="legendLabelNKDFDE"
+            >Keine Datenflüsse
+            <span id="legendMarkerKeineDE"></span>
+          </label>
+        </p>
+      </div>
+
+      <div id="pentagonNKDFDE" class="svg-containerNKDFDE"></div>
+    </div>
+
+    <script>
+      /*-------------------*/
+      /* Definition Colors */
+      /*-------------------*/
+
+      var jade = "#529c9a";
+      var rubin = "#cd003a";
+      var kobalt = "#2c4262";
+      var saphire = "#101a3a";
+      var gray = "#ccc4c2";
+      var quarz = "#c69e8e";
+      var bernstein = "#f0c84a";
+      var amethyst = "#5e4458";
+      var granat = "#940a2d";
+
+      /*-----------------------*/
+      /* Definition Dimensions */
+      /*-----------------------*/
+
+      var imgRadiusNKDFDE = 40;
+      var firstRowNKDFDE = 0;
+      var firstColNKDFDE = 0;
+      var colWidthNKDFDE = 25;
+      var rowHightNKDFDE = 30;
+      var secondRowNKDFDE = firstRowNKDFDE + 3 * rowHightNKDFDE;
+      var thirdRowNKDFDE = secondRowNKDFDE + 1.2 * rowHightNKDFDE;
+      var fourthRowNKDFDE = thirdRowNKDFDE + 3.5 * rowHightNKDFDE;
+      var secondColNKDFDE = 1.5 * colWidthNKDFDE;
+      var thirdColNKDFDE = secondColNKDFDE + 2.5 * colWidthNKDFDE;
+      var fourthColNKDFDE = thirdColNKDFDE + 2.5 * colWidthNKDFDE;
+      var fifthColNKDFDE = fourthColNKDFDE + 2.5 * colWidthNKDFDE;
+      var firstRowNKDFDEMid = firstRowNKDFDE + imgRadiusNKDFDE / 2;
+      var secondRowNKDFDEMid = secondRowNKDFDE + imgRadiusNKDFDE / 2;
+      var thirdRowNKDFDEMid = thirdRowNKDFDE + imgRadiusNKDFDE / 2;
+      var fourthRowNKDFDEMid = fourthRowNKDFDE + imgRadiusNKDFDE / 2;
+      var firstColNKDFDEMid = firstColNKDFDE + imgRadiusNKDFDE / 2;
+      var secondColNKDFDEMid = secondColNKDFDE + imgRadiusNKDFDE / 2;
+      var thirdColNKDFDEMid = thirdColNKDFDE + imgRadiusNKDFDE / 2;
+      var fourthColNKDFDEMid = fourthColNKDFDE + imgRadiusNKDFDE / 2;
+      var fifthColNKDFDEMid = fifthColNKDFDE + imgRadiusNKDFDE / 2;
+      var firstRowNKDFDEEnd = firstRowNKDFDE + imgRadiusNKDFDE;
+      var secondRowNKDFDEEnd = secondRowNKDFDE + imgRadiusNKDFDE;
+      var thirdRowNKDFDEEnd = thirdRowNKDFDE + imgRadiusNKDFDE;
+      var fourthRowNKDFDEEnd = fourthRowNKDFDE + imgRadiusNKDFDE;
+      var firstColNKDFDEEnd = firstColNKDFDE + imgRadiusNKDFDE;
+      var secondColNKDFDEEnd = secondColNKDFDE + imgRadiusNKDFDE;
+      var thirdColNKDFDEEnd = thirdColNKDFDE + imgRadiusNKDFDE;
+      var fourthColNKDFDEEnd = fourthColNKDFDE + imgRadiusNKDFDE;
+      var fifthColNKDFDEEnd = fifthColNKDFDE + imgRadiusNKDFDE;
+      var p31b = { x: thirdColNKDFDEMid, y: firstRowNKDFDEEnd };
+      var p12r = { x: firstColNKDFDEEnd, y: secondRowNKDFDEMid };
+      var p24t = { x: secondColNKDFDEMid, y: fourthRowNKDFDE };
+      var p44t = { x: fourthColNKDFDEMid, y: fourthRowNKDFDE };
+      var p52l = { x: fifthColNKDFDE, y: secondRowNKDFDEMid };
+      var p33t = { x: thirdColNKDFDEMid, y: thirdRowNKDFDE };
+      var p33r = { x: thirdColNKDFDEEnd, y: thirdRowNKDFDEMid };
+      var p33b = { x: thirdColNKDFDEMid, y: thirdRowNKDFDEEnd };
+      var p33l = { x: thirdColNKDFDE, y: thirdRowNKDFDEMid };
+      var p33 = { x: thirdColNKDFDEMid, y: thirdRowNKDFDEMid };
+
+      var cornerRadiusNKDFDE = 3;
+      var lineEdgeRadiusNKDFDE = 5;
+      var durationNKDFDE = 1500;
+      var strokeWidth = 1;
+      var arrowGap = 2;
+
+      /*--------------*/
+      /* Generate SVG */
+      /*--------------*/
+
+      var svgNKDFDE = d3
+        .select("div#pentagonNKDFDE")
+        .append("svg")
+        .attr("viewBox", "0 0 360 400")
+        .attr("preserveAspectRatio", "xMinYMin meet");
+
+      /*----------------------*/
+      /* Create an arrow head */
+      /*----------------------*/
+
+      // Rubin
+      svgNKDFDE
+        .append("defs")
+        .append("marker")
+        .attr("id", "arrowheadRubin")
+        .attr("class", "linesNKDFDE")
+        .attr("refX", 6)
+        .attr("refY", 3)
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0,0 V 6 L8,3 Z")
+        .attr("fill", rubin);
+
+      // Jade
+      svgNKDFDE
+        .append("defs")
+        .append("marker")
+        .attr("id", "arrowheadJade")
+        .attr("class", "linesNKDFDE")
+        .attr("refX", 6)
+        .attr("refY", 3)
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0,0 V 6 L8,3 Z")
+        .attr("fill", jade);
+
+      // Bernstein
+      svgNKDFDE
+        .append("defs")
+        .append("marker")
+        .attr("id", "arrowheadBernstein")
+        .attr("class", "linesNKDFDE")
+        .attr("refX", 6)
+        .attr("refY", 3)
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0,0 V 6 L8,3 Z")
+        .attr("fill", bernstein);
+
+      /*-------------------*/
+      /* Definition Lines  */
+      /*-------------------*/
+
+      /*   var To31b = svgNKDFDE
+        .append("line")
+        .attr("class", "linesNKDFDE")
+        .attr("x1", p33.x)
+        .attr("y1", p33.y)
+        .attr("x2", p31b.x)
+        .attr("y2", p31b.y + arrowGap)
+        .attr("stroke", rubin)
+        .attr("stroke-width", strokeWidth)
+        .attr("marker-end", "url(#arrowheadRubin)");
+      var To12r = svgNKDFDE
+        .append("line")
+        .attr("class", "linesNKDFDE")
+        .attr("x1", p33.x)
+        .attr("y1", p33.y)
+        .attr("x2", p12r.x + arrowGap)
+        .attr("y2", p12r.y)
+        .attr("stroke", rubin)
+        .attr("stroke-width", strokeWidth)
+        .attr("marker-end", "url(#arrowheadRubin)");
+      var To24t = svgNKDFDE
+        .append("line")
+        .attr("class", "linesNKDFDE")
+        .attr("x1", p33.x)
+        .attr("y1", p33.y)
+        .attr("x2", p24t.x)
+        .attr("y2", p24t.y - arrowGap)
+        .attr("stroke", rubin)
+        .attr("stroke-width", strokeWidth)
+        .attr("marker-end", "url(#arrowheadRubin)");
+      var To44t = svgNKDFDE
+        .append("line")
+        .attr("class", "linesNKDFDE")
+        .attr("x1", p33.x)
+        .attr("y1", p33.y)
+        .attr("x2", p44t.x)
+        .attr("y2", p44t.y - arrowGap)
+        .attr("stroke", bernstein)
+        .attr("stroke-width", strokeWidth)
+        .attr("marker-end", "url(#arrowheadBernstein)");
+      var To52l = svgNKDFDE
+        .append("line")
+        .attr("class", "linesNKDFDE")
+        .attr("x1", p33.x)
+        .attr("y1", p33.y)
+        .attr("x2", p52l.x - arrowGap)
+        .attr("y2", p52l.y)
+        .attr("stroke", rubin)
+        .attr("stroke-width", strokeWidth)
+        .attr("marker-end", "url(#arrowheadRubin)"); */
+
+      // Create a path data generator with curveBasis interpolation
+      var curveGenerator = d3.line().curve(d3.curveBasis);
+
+      // Define the path data as a curve from p33b to itself (closing the loop)
+      var pathDataTo33b = curveGenerator([
+        [p33b.x, p33b.y + 2 * arrowGap],
+        [p33b.x - imgRadiusNKDFDE, p33b.y + imgRadiusNKDFDE],
+        [p33b.x + imgRadiusNKDFDE, p33b.y + imgRadiusNKDFDE],
+        [p33b.x + arrowGap, p33b.y + arrowGap * 4],
+      ]);
+
+      // Append the path element to your SVG
+      var pathTo33b = svgNKDFDE
+        .append("path")
+        .attr("class", "linesNKDFDE")
+        .attr("d", pathDataTo33b)
+        .attr("stroke", jade)
+        .attr("stroke-width", strokeWidth)
+        .attr("fill", "none")
+        .attr("marker-end", "url(#arrowheadJade)");
+
+      // Define the path data as a curve from p33b to itself (closing the loop)
+      var pathDataTo31b = curveGenerator([
+        [p33t.x, p33t.y],
+        [p33t.x - imgRadiusNKDFDE, p33t.y - imgRadiusNKDFDE],
+        [p33t.x + imgRadiusNKDFDE, p31b.y + imgRadiusNKDFDE],
+        [p31b.x + arrowGap, p31b.y + arrowGap / 2],
+      ]);
+
+      // Append the path element to your SVG
+      var To31b = svgNKDFDE
+        .append("path")
+        .attr("class", "linesNKDFDE")
+        .attr("d", pathDataTo31b)
+        .attr("stroke", rubin)
+        .attr("stroke-width", strokeWidth)
+        .attr("fill", "none")
+        .attr("marker-end", "url(#arrowheadRubin)");
+
+      // Define the path data as a curve from p33b to itself (closing the loop)
+      var pathDataTo12r = curveGenerator([
+        [p33.x, p33.y],
+        [p33l.x - imgRadiusNKDFDE, p33l.y - imgRadiusNKDFDE],
+        [p12r.x + imgRadiusNKDFDE, p12r.y + imgRadiusNKDFDE],
+        [p12r.x + arrowGap, p12r.y + arrowGap / 2],
+      ]);
+
+      // Append the path element to your SVG
+      var To12r = svgNKDFDE
+        .append("path")
+        .attr("class", "linesNKDFDE")
+        .attr("d", pathDataTo12r)
+        .attr("stroke", bernstein)
+        .attr("stroke-width", strokeWidth)
+        .attr("fill", "none")
+        .attr("marker-end", "url(#arrowheadBernstein)");
+
+      // Define the path data as a curve from p33b to itself (closing the loop)
+      var pathDataTo24t = curveGenerator([
+        [p33.x, p33.y],
+        [p33l.x - imgRadiusNKDFDE, p33l.y + imgRadiusNKDFDE],
+        [p24t.x + imgRadiusNKDFDE, p24t.y - imgRadiusNKDFDE],
+        [p24t.x + arrowGap, p24t.y - arrowGap / 2],
+      ]);
+
+      // Append the path element to your SVG
+      var To24t = svgNKDFDE
+        .append("path")
+        .attr("class", "linesNKDFDE")
+        .attr("d", pathDataTo24t)
+        .attr("stroke", jade)
+        .attr("stroke-width", strokeWidth)
+        .attr("fill", "none")
+        .attr("marker-end", "url(#arrowheadJade)");
+
+      // Define the path data as a curve from p33b to itself (closing the loop)
+      var pathDataTo44t = curveGenerator([
+        [p33.x, p33.y],
+        [p33l.x + imgRadiusNKDFDE, p33l.y + imgRadiusNKDFDE],
+        [p44t.x + imgRadiusNKDFDE, p24t.y - imgRadiusNKDFDE],
+        [p44t.x + arrowGap, p44t.y - arrowGap / 2],
+      ]);
+
+      // Append the path element to your SVG
+      var To44t = svgNKDFDE
+        .append("path")
+        .attr("class", "linesNKDFDE")
+        .attr("d", pathDataTo44t)
+        .attr("stroke", rubin)
+        .attr("stroke-width", strokeWidth)
+        .attr("fill", "none")
+        .attr("marker-end", "url(#arrowheadRubin)");
+
+      // Define the path data as a curve from p33b to itself (closing the loop)
+      var pathDataTo52l = curveGenerator([
+        [p33.x, p33.y],
+        [p33l.x + imgRadiusNKDFDE, p33l.y - imgRadiusNKDFDE],
+        [p52l.x - imgRadiusNKDFDE, p52l.y + imgRadiusNKDFDE],
+        [p52l.x - arrowGap, p52l.y - arrowGap / 2],
+      ]);
+
+      // Append the path element to your SVG
+      var To52l = svgNKDFDE
+        .append("path")
+        .attr("class", "linesNKDFDE")
+        .attr("d", pathDataTo52l)
+        .attr("stroke", rubin)
+        .attr("stroke-width", strokeWidth)
+        .attr("fill", "none")
+        .attr("marker-end", "url(#arrowheadRubin)");
+
+      /*-----------------*/
+      /* Nutzugskontexte */
+      /*-----------------*/
+
+      var circle = svgNKDFDE
+        .append("circle")
+        .attr("cx", thirdColNKDFDEMid)
+        .attr("cy", thirdRowNKDFDEMid)
+        .attr("r", imgRadiusNKDFDE / 1.5)
+        .attr("fill", "white")
+        .attr("stroke", kobalt)
+        .attr("stroke-width", 1.25);
+
+      /*
+      Lehren und Lernen
+      */
+      var llNKDFDE = svgNKDFDE
+        .append("image")
+        .attr("class", "iconsNKDFDE")
+        .attr("x", thirdColNKDFDE)
+        .attr("y", thirdRowNKDFDE)
+        .attr("width", imgRadiusNKDFDE)
+        .attr("height", imgRadiusNKDFDE)
+        .attr(
+          "xlink:href",
+          "https://www.educa.ch/sites/default/files/2023-12/DataGovernance_gruen_300dpi.png"
+        )
+        .on("mouseover", function (event, d) {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html("Lehren & Lernen: Datenflüsse durch Lehrpersonen, Eltern oder Schülerinnen und Schüler im Rahmen des Unterrichtsalltags und Lerngeschehens.")
+            .style("left", event.pageX + "px")
+            .style("top", event.pageY + "px");
+        })
+        .on("mouseout", function (d) {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      var bfNKDFDE = svgNKDFDE
+        .append("image")
+        .attr("class", "iconsNKDFDE")
+        .attr("x", thirdColNKDFDE)
+        .attr("y", firstRowNKDFDE)
+        .attr("width", imgRadiusNKDFDE)
+        .attr("height", imgRadiusNKDFDE)
+        .attr(
+          "xlink:href",
+          "https://www.educa.ch/sites/default/files/2023-12/Datenschutz_gruen_300dpi.png"
+        )
+        .on("mouseover", function (event, d) {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html("Bildungsforschung: Datenflüsse zur Evaluation des tatsächlichen Bildungsgeschehens")
+            .style("left", event.pageX + "px")
+            .style("top", event.pageY + "px");
+        })
+        .on("mouseout", function (d) {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      var bmNKDFDE = svgNKDFDE
+        .append("image")
+        .attr("class", "iconsNKDFDE")
+        .attr("x", secondColNKDFDE)
+        .attr("y", fourthRowNKDFDE)
+        .attr("width", imgRadiusNKDFDE)
+        .attr("height", imgRadiusNKDFDE)
+        .attr(
+          "xlink:href",
+          "https://www.educa.ch/sites/default/files/2023-12/DigitaleIntegritaet_gruen_300dpi.png"
+        )
+        .on("mouseover", function (event, d) {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html("Bildungsmarkt: Datenflüsse zur kommerziellen Nutzung")
+            .style("left", event.pageX + "px")
+            .style("top", event.pageY + "px");
+        })
+        .on("mouseout", function (d) {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      var bpNKDFDE = svgNKDFDE
+        .append("image")
+        .attr("class", "iconsNKDFDE")
+        .attr("x", fifthColNKDFDE)
+        .attr("y", secondRowNKDFDE)
+        .attr("width", imgRadiusNKDFDE)
+        .attr("height", imgRadiusNKDFDE)
+        .attr(
+          "xlink:href",
+          "https://www.educa.ch/sites/default/files/2023-12/Datenzugang_gruen_300dpi.png"
+        )
+        .on("mouseover", function (event, d) {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html("Bildungspolitik & -steuerung: Datenflüsse für die Planung, Kontrolle und Steuerung des Bildungssystems")
+            .style("left", event.pageX + "px")
+            .style("top", event.pageY + "px");
+        })
+        .on("mouseout", function (d) {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      var bvNKDFDE = svgNKDFDE
+        .append("image")
+        .attr("class", "iconsNKDFDE")
+        .attr("x", fourthColNKDFDE)
+        .attr("y", fourthRowNKDFDE)
+        .attr("width", imgRadiusNKDFDE)
+        .attr("height", imgRadiusNKDFDE)
+        .attr(
+          "xlink:href",
+          "https://www.educa.ch/sites/default/files/2023-12/Datenanalyse_gruen_300dpi.png"
+        )
+        .on("mouseover", function (event, d) {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html("Bildungsverwaltung & Schulorganisation: Datenflüsse für die rollende Organisation und Administration ihrer Bildungsinstitutionen")
+            .style("left", event.pageX + "px")
+            .style("top", event.pageY + "px");
+        })
+        .on("mouseout", function (d) {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      var asNKDFDE = svgNKDFDE
+        .append("image")
+        .attr("class", "iconsNKDFDE")
+        .attr("x", firstColNKDFDE)
+        .attr("y", secondRowNKDFDE)
+        .attr("width", imgRadiusNKDFDE)
+        .attr("height", imgRadiusNKDFDE)
+        .attr(
+          "xlink:href",
+          "https://www.educa.ch/sites/default/files/2023-12/Datenföderation_gruen_300dpi.png"
+        )
+        .on("mouseover", function (event, d) {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html("Andere Sektoren: Datenflüsse die von ausserhalb des Bildungssystems kommen oder das Bildungssystem verlassen")
+            .style("left", event.pageX + "px")
+            .style("top", event.pageY + "px");
+        })
+        .on("mouseout", function (d) {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      /*-----------------------*/
+      /* Nutzugskontexte Texte */
+      /*-----------------------*/
+
+      var Text31bNKDFDE = svgNKDFDE
+        .append("text")
+        .attr("class", "iconsTextNKDFDE")
+        .attr("x", thirdColNKDFDEEnd + arrowGap)
+        .attr("y", firstRowNKDFDEMid)
+        .text("Bildungsforschung");
+
+      var Text12rNKDFDE = svgNKDFDE
+        .append("text")
+        .attr("class", "iconsTextNKDFDE")
+        .attr("x", firstColNKDFDE)
+        .attr("y", secondRowNKDFDE - arrowGap)
+        .text("Andere Sektoren");
+
+      var Text24tNKDFDE = svgNKDFDE
+        .append("text")
+        .attr("class", "iconsTextNKDFDE")
+        .attr("x", secondColNKDFDEEnd)
+        .attr("y", fourthRowNKDFDE)
+        .text("Bildungsmarkt");
+
+      var Text44tNKDFDE = svgNKDFDE
+        .append("text")
+        .attr("class", "iconsTextNKDFDE")
+        .attr("x", fourthColNKDFDEEnd)
+        .attr("y", fourthRowNKDFDE)
+        .text("Bildungsverwaltung & Schulorganisation");
+
+      var Text52lNKDFDE = svgNKDFDE
+        .append("text")
+        .attr("class", "iconsTextNKDFDE")
+        .attr("x", fifthColNKDFDE - arrowGap)
+        .attr("y", secondRowNKDFDE - arrowGap)
+        .text("Bildungspolitik & -steuerung");
+
+      var Text33rNKDFDE = svgNKDFDE
+        .append("text")
+        .attr("class", "iconsTextNKDFDE")
+        .attr("x", thirdColNKDFDEEnd + arrowGap * 5)
+        .attr("y", thirdRowNKDFDEMid)
+        .text("Lehren & Lernen");
+
+      /*-------------------------*/
+      /*Tooltip Nutzungskontexte */
+      /*-------------------------*/
+
+      var tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltipNKDFDE")
+        .style("opacity", 0);
+
+      /*-----------------*/
+      /* Update function */
+      /*-----------------*/
+
+      function updatePerspectiveNKDFDE() {
+        updateSetbackNKDFDE();
+        updateSelectedValueNKDFDE();
+
+        function updateSetbackNKDFDE() {
+          d3.selectAll(".iconsNKDFDE")
+            .transition()
+            .duration(durationNKDFDE / 2)
+            .attr("x", thirdColNKDFDE)
+            .attr("y", thirdRowNKDFDE);
+
+          circle
+            .transition()
+            .attr("stroke-width", 0)
+            .transition()
+            .duration(durationNKDFDE / 2)
+            .attr("stroke-width", 1.25);
+        }
+
+        function updateSelectedValueNKDFDE() {
+          var selectedPerspectiveNKDFDE = document.getElementById(
+            "perspectiveDropdownDE"
+          ).value;
+
+          // Andere Sektoren
+          if (selectedPerspectiveNKDFDE == 1) {
+            bvNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fourthColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bpNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fifthColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            bmNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", secondColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bfNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", thirdColNKDFDE)
+              .attr("y", firstRowNKDFDE);
+
+            llNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", firstColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            To31b.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To12r.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To24t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To44t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", bernstein)
+              .attr("marker-end", "url(#arrowheadBernstein)");
+
+            To52l.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            pathTo33b
+              .transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            Text31bNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsforschung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text12rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Lehren & Lernen")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text24tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsmarkt")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text44tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsverwaltung & Schulorganisation")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text52lNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungspolitik & -steuerung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text33rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Andere Sektoren")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+          }
+
+          // Bildungsforschung
+          if (selectedPerspectiveNKDFDE == 2) {
+            asNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", thirdColNKDFDE)
+              .attr("y", firstRowNKDFDE);
+
+            bvNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fourthColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bpNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fifthColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            bmNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", secondColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            llNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", firstColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            To31b.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To12r.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To24t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To44t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To52l.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", jade)
+              .attr("marker-end", "url(#arrowheadJade)");
+
+            pathTo33b
+              .transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", bernstein)
+              .attr("marker-end", "url(#arrowheadBernstein)");
+
+            Text31bNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Andere Sektoren")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text12rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Lehren & Lernen")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text24tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsmarkt")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text44tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsverwaltung & Schulorganisation")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text52lNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungspolitik & -steuerung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text33rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsforschung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+          }
+
+          // Bildungsmarkt
+          if (selectedPerspectiveNKDFDE == 3) {
+            asNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", secondColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bvNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fourthColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bpNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fifthColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            bfNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", thirdColNKDFDE)
+              .attr("y", firstRowNKDFDE);
+
+            llNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", firstColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            To31b.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", bernstein)
+              .attr("marker-end", "url(#arrowheadBernstein)");
+
+            To12r.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To24t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To44t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To52l.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            pathTo33b
+              .transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", bernstein)
+              .attr("marker-end", "url(#arrowheadBernstein)");
+
+            Text31bNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsforschung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text12rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Lehren & Lernen")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text24tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Andere Sektoren")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text44tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsverwaltung & Schulorganisation")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text52lNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungspolitik & -steuerung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text33rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsmarkt")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+          }
+
+          // Bildungspolitik und -steuerung
+          if (selectedPerspectiveNKDFDE == 4) {
+            asNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fifthColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            bvNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fourthColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bmNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", secondColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bfNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", thirdColNKDFDE)
+              .attr("y", firstRowNKDFDE);
+
+            llNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", firstColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            To31b.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", bernstein)
+              .attr("marker-end", "url(#arrowheadBernstein)");
+
+            To12r.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To24t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To44t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To52l.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            pathTo33b
+              .transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            Text31bNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsforschung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text12rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Lehren & Lernen")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text24tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsmarkt")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text44tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsverwaltung & Schulorganisation")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text52lNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Andere Sektoren")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text33rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungspolitik & -steuerung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+          }
+
+          // Bildungsverwaltung und Schulorganisation
+          if (selectedPerspectiveNKDFDE == 5) {
+            asNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fourthColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bpNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fifthColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            bmNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", secondColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bfNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", thirdColNKDFDE)
+              .attr("y", firstRowNKDFDE);
+
+            llNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", firstColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            To31b.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To12r.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", bernstein)
+              .attr("marker-end", "url(#arrowheadBernstein)");
+
+            To24t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", jade)
+              .attr("marker-end", "url(#arrowheadJade)");
+
+            To44t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To52l.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", jade)
+              .attr("marker-end", "url(#arrowheadJade)");
+
+            pathTo33b
+              .transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", jade)
+              .attr("marker-end", "url(#arrowheadJade)");
+
+            Text31bNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsforschung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text12rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Lehren & Lernen")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text24tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsmarkt")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text44tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Andere Sektoren")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text52lNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungspolitik & -steuerung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text33rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsverwaltung & Schulorganisation")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+          }
+
+          // Lehren und Lernen
+          if (selectedPerspectiveNKDFDE == 6) {
+            asNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", firstColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            bvNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fourthColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bpNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", fifthColNKDFDE)
+              .attr("y", secondRowNKDFDE);
+
+            bmNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", secondColNKDFDE)
+              .attr("y", fourthRowNKDFDE);
+
+            bfNKDFDE
+              .transition()
+              .duration(durationNKDFDE / 2)
+              .attr("x", thirdColNKDFDE)
+              .attr("y", firstRowNKDFDE);
+
+            To31b.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To12r.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", bernstein)
+              .attr("marker-end", "url(#arrowheadBernstein)");
+
+            To24t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", jade)
+              .attr("marker-end", "url(#arrowheadJade)");
+
+            To44t.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            To52l.transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", rubin)
+              .attr("marker-end", "url(#arrowheadRubin)");
+
+            pathTo33b
+              .transition()
+              .attr("opacity", "0")
+              .transition()
+              .duration(durationNKDFDE)
+              .attr("opacity", "1")
+              .attr("stroke", jade)
+              .attr("marker-end", "url(#arrowheadJade)");
+
+            Text31bNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsforschung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text12rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Andere Sektoren")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text24tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsmarkt")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text44tNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bildungsverwaltung & Schulorganisation")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text52lNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Bidlungspolitik & -steuerung")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+
+            Text33rNKDFDE.transition()
+              .attr("opacity", "0")
+              .transition()
+              .text("Lehren & Lernen")
+              .duration(durationNKDFDE)
+              .attr("opacity", "1");
+          }
+        }
+      }
+
+      document.getElementById("perspectiveDropdownDE").value = "6";
+    </script>
+  </body>
+</html>
