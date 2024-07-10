@@ -1,0 +1,48 @@
+{
+  "name": "Digitale Kriminalität", "size": 35845, "definition_de": "Die digitale Kriminalität (Cyberkriminalität) umfasst alle sogenannten 'digitalen' Straftaten, die im Wesentlichen den Straftaten entsprechen, die in Telekommunikationsnetzen, insbesondere im Internet, begangen werden. Die Identifizierung einer Straftat als Cyberdelikt erfolgt in der Polizeilichen Kriminalstatistik über den Modus Operandi.", "definition_fr": "",
+  "children": [
+    {"name": "Cyber Wirtschaftskriminalität", "size": 32281, "definition_de": "siehe Unterkategorien", "definition_fr": ""},
+    {"name": "Cyber Sexualdelikte", "size": 2668, "definition_de": "siehe Unterkategorien", "definition_fr": ""},
+    {"name": "Cyber Rufschädigung & unlauteres Verhalten", "size": 892, "definition_de": "siehe Unterkategorien", "definition_fr": "",
+    "children": [
+      {
+        "name": "Cybersquatting", "size": 54, 
+        "definition_de": "Verwenden / Registrieren von leicht zu verwechselnden Domainnamen. Registrierung von Domainnamen, die dem Registrierenden eigentlich nicht zustehen oder die sehr ähnlich sind wie die Namen von Firmen, Behörden, Marken oder bekannten Personen (z.B. www.abmin.ch anstatt www.admin.ch).", 
+        "definition_fr": ""
+      },
+      {
+        "name": "Cyber-Rufschädigung (geschäftlich)", "size": 78, 
+        "definition_de": "Im Internet publizierte negative Kommentare, z.B. unrichtige, täuschende oder unnötig verletzende Behauptungen zu Produkten oder Dienstleistungen eines Dritten.", 
+        "definition_fr": ""
+      }, 
+      {
+        "name": "Cyberbullying & Cybermobbing", "size": 760, 
+        "definition_de": "Verleumdung, Blossstellung oder Belästigung von Personen durch Verbreitung von diffamierenden Texten, Bildern oder Filmen.",
+        "definition_fr": ""
+      }
+                ]
+    },
+    {"name": "Darknet", "size": 2, 
+    "definition_de": "siehe Unterkategorien",
+    "definition_fr": "",
+    "children": [
+      {
+        "name": "Illegaler Handel im Darknet", "size": 2, 
+        "definition_de": "Kauf/Verkauf von illegalen Gütern und Dienstleistungen im Darknet (Waffen, Betäubungsmittel, Medikamente, gestohlene Ware usw.).", 
+        "definition_fr": "" 
+      }
+                ]
+    },
+    {"name": "Andere", "size": 3,
+    "definition_de": "siehe Unterkategorien",
+    "definition_fr": "",
+    "children": [
+      {
+        "name": "Data leaking", "size": 3, 
+        "definition_de": "Ideologisch oder finanziell motiviertes Weitergeben von vertraulichen Informationen.", 
+        "definition_fr": ""
+      }
+                ]
+    }
+  ]
+}
