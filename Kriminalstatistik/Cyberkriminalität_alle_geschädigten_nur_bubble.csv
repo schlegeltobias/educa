@@ -1,0 +1,43 @@
+cat_1;cat_2;cat_3;cat_4;sum_type;lowest_level;straftat;victimes;tooltip
+Total digitale Kriminalität;Total digitale Kriminalität;;;total;0; 35 845 ; 24 000 ;lirum larum 1
+Cyber Wirtschaftskriminalität;Cyber Wirtschaftskriminalität;;;subtotal1;0; 32 281 ; 22 997 ;lirum larum 2
+Cyber Wirtschaftskriminalität;Phishing;Phishing;Phishing;subtotal2;1; 2 414 ; 1 619 ;lirum larum 3
+Cyber Wirtschaftskriminalität;Hacking;Hacking;Hacking;subtotal2;0; 1 037 ;  719 ;lirum larum 4
+Cyber Wirtschaftskriminalität;Hacking;Gewaltsames Eindringen in Datenverarbeitungssystem;Gewaltsames Eindringen in Datenverarbeitungssystem;subtotal3;1;  261 ;  188 ;lirum larum 5
+Cyber Wirtschaftskriminalität;Hacking;Eindringen in Datenverarbeitungssystem mit fremden Zugangsdaten;Eindringen in Datenverarbeitungssystem mit fremden Zugangsdaten;subtotal3;1;  776 ;  531 ;lirum larum 6
+Cyber Wirtschaftskriminalität;Malware;Malware;Malware;subtotal2;0;  477 ;  359 ;lirum larum 7
+Cyber Wirtschaftskriminalität;Malware;Ransomware;Ransomware;subtotal3;1;  300 ;  211 ;lirum larum 8
+Cyber Wirtschaftskriminalität;Malware;E-Banking Trojaner;E-Banking Trojaner;subtotal3;1;  56 ;  49 ;lirum larum 9
+Cyber Wirtschaftskriminalität;Malware;Spyware;Spyware;subtotal3;1;  18 ;  14 ;lirum larum 10
+Cyber Wirtschaftskriminalität;Malware;Rogueware & Scareware;Rogueware & Scareware;subtotal3;1;  90 ;  75 ;lirum larum 11
+Cyber Wirtschaftskriminalität;Malware;Botnet;Botnet;subtotal3;1;  13 ;  9 ;lirum larum 12
+Cyber Wirtschaftskriminalität;DDoS;DDoS;DDoS;subtotal2;1;  22 ;  15 ;lirum larum 13
+Cyber Wirtschaftskriminalität;Cyberbetrug;Cyberbetrug;Cyberbetrug;subtotal2;0; 24 410 ; 19 232 ;lirum larum 14
+Cyber Wirtschaftskriminalität;Cyberbetrug;CEO/BEC Betrug;CEO/BEC Betrug;subtotal3;1;  408 ;  361 ;lirum larum 15
+Cyber Wirtschaftskriminalität;Cyberbetrug;Betrügerische Internetshops;Betrügerische Internetshops;subtotal3;1;  618 ;  556 ;lirum larum 16
+Cyber Wirtschaftskriminalität;Cyberbetrug;Falsche Immobilienanzeigen;Falsche Immobilienanzeigen;subtotal3;1;  492 ;  489 ;lirum larum 17
+Cyber Wirtschaftskriminalität;Cyberbetrug;Falsche Unterstützungsanfragen;Falsche Unterstützungsanfragen;subtotal3;1;  188 ;  184 ;lirum larum 18
+Cyber Wirtschaftskriminalität;Cyberbetrug;Vorschussbetrug;Vorschussbetrug;subtotal3;1;  574 ;  529 ;lirum larum 19
+Cyber Wirtschaftskriminalität;Cyberbetrug;Betrügerischer technischer Support;Betrügerischer technischer Support;subtotal3;1; 1 604 ; 1 091 ;lirum larum 20
+Cyber Wirtschaftskriminalität;Cyberbetrug;Romance Scam;Romance Scam;subtotal3;1;  712 ;  648 ;lirum larum 21
+Cyber Wirtschaftskriminalität;Cyberbetrug;Kleinanzeigeplattformen – Ware nicht bezahlt;Kleinanzeigeplattformen – Ware nicht bezahlt;subtotal3;1;  581 ;  543 ;lirum larum 22
+Cyber Wirtschaftskriminalität;Cyberbetrug;Kleinanzeigeplattformen – Ware nicht geliefert;Kleinanzeigeplattformen – Ware nicht geliefert;subtotal3;1; 8 603 ; 7 366 ;lirum larum 23
+Cyber Wirtschaftskriminalität;Cyberbetrug;Missbrauch von Online-Zahlungssystem oder fremder Identität für Betrug;Missbrauch von Online-Zahlungssystem oder fremder Identität für Betrug;subtotal3;1; 8 035 ; 5 626 ;lirum larum 24
+Cyber Wirtschaftskriminalität;Cyberbetrug;Online Anlagebetrug;Online Anlagebetrug;subtotal3;1; 1 726 ; 1 322 ;lirum larum 25
+Cyber Wirtschaftskriminalität;Cyberbetrug;Anderer Internetbetrug;Anderer Internetbetrug;subtotal3;1;  869 ;  809 ;lirum larum 26
+Cyber Wirtschaftskriminalität;Money & Package Mules;Money & Package Mules;Money & Package Mules;subtotal2;1; 2 387 ;  971 ;lirum larum 27
+Cyber Wirtschaftskriminalität;Sextortion (Geld);Sextortion (Geld);Sextortion (Geld);subtotal2;1; 1 438 ; 1 034 ;lirum larum 28
+Cyber Wirtschaftskriminalität;Krypto-Diebstahl;Krypto-Diebstahl;Krypto-Diebstahl;subtotal2;1;  97 ;  66 ;lirum larum 29
+Cyber Sexualdelikte;Cyber Sexualdelikte;Cyber Sexualdelikte;Cyber Sexualdelikte;subtotal1;0; 2 668 ;  283 ;lirum larum 30
+Cyber Sexualdelikte;Verbotene Pornografie;Verbotene Pornografie;Verbotene Pornografie;subtotal2;1; 2 396 ;  136 ;lirum larum 31
+Cyber Sexualdelikte;Grooming;Grooming;Grooming;subtotal2;1;  136 ;  62 ;lirum larum 32
+Cyber Sexualdelikte;Sextortion (Sex);Sextortion (Sex);Sextortion (Sex);subtotal2;1;  109 ;  81 ;lirum larum 33
+Cyber Sexualdelikte;Live Streaming;Live Streaming;Live Streaming;subtotal2;1;  27 ;  9 ;lirum larum 34
+Cyber Rufschädigung & unlauteres Verhalten;Cyber Rufschädigung & unlauteres Verhalten;Cyber Rufschädigung & unlauteres Verhalten;Cyber Rufschädigung & unlauteres Verhalten;subtotal1;0;  892 ;  745 ;lirum larum 35
+Cyber Rufschädigung & unlauteres Verhalten;Cybersquatting;Cybersquatting;Cybersquatting;subtotal2;1;  54 ;  55 ;lirum larum 36
+Cyber Rufschädigung & unlauteres Verhalten;Cyber-Rufschädigung (geschäftlich);Cyber-Rufschädigung (geschäftlich);Cyber-Rufschädigung (geschäftlich);subtotal2;1;  78 ;  80 ;lirum larum 37
+Cyber Rufschädigung & unlauteres Verhalten;Cyberbullying & Cybermobbing;Cyberbullying & Cybermobbing;Cyberbullying & Cybermobbing;subtotal2;1;  760 ;  612 ;lirum larum 38
+Darknet;Darknet;Darknet;Darknet;subtotal1;0;  2 ;  1 ;lirum larum 39
+Darknet;Illegaler Handel im Darknet;Illegaler Handel im Darknet;Illegaler Handel im Darknet;subtotal2;1;  2 ;  1 ;lirum larum 40
+Andere;Andere;Andere;Andere;subtotal1;0;  3 ;  2 ;lirum larum 41
+Andere;Data leaking;Data leaking;Data leaking;subtotal2;1;  3 ;  2 ;lirum larum 42

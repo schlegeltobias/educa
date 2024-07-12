@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<style>
+  .wrapperCKFR {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-template-columns: 49% 49%;
+    grid-template-rows: 1fr 50px;
+  }
+
+  @font-face {
+    font-family: educaSans;
+    src: url(Educa_Sans_Webfonts/EducaSans-Regular.woff2);
+  }
+
+  #titleDropdownCKFR,
+  #DropdownCKFR,
+  .labelCKFR,
+  #tooltipCKFR {
+    font-size: 0.95rem;
+    font-family: educaSans, Arial, sans-serif;
+    text-anchor: middle;
+    vertical-align: middle;
+    /* text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; */
+  }
+
+  @media screen and (min-width: 480px) {
+    #titleDropdownCKFR,
+    #DropdownCKFR,
+    .labelCKFR #tooltipCKFR {
+      font-size: 0.95rem;
+      font-family: educaSans, Arial, sans-serif;
+      text-anchor: middle;
+      vertical-align: middle;
+    }
+  }
+
+  .node {
+    cursor: pointer;
+  }
+
+  .node:hover {
+    stroke: #000;
+    stroke-width: 1.5px;
+  }
+
+  .node--leaf {
+    fill: white;
+  }
+
+  .labelCKFR,
+  .node--root {
+    pointer-events: none;
+  }
+
+  .svg-containerCKFR {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    overflow: hidden;
+    grid-row: 1/1;
+    grid-column: 1/-1;
+  }
+
+  #tooltipCKFR {
+    grid-row: 2/-1;
+    grid-column: 1/1;
+  }
+</style>
+<div class="wrapperCKFR">
+  <div id="canvasCKFR" class="svg-containerCKFR"></div>
+  <p id="tooltipCKFR"></p>
+</div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<!-- <script src="d3.v6.min.js"></script> -->
+
+<script>
+  // Define text wrapping function
+  function wrapText(text, width) {
+    text.each(function () {
+      var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")) || 0,
+        tspan = text
+          .text(null)
+          .append("tspan")
+          .attr("x", 0)
+          .attr("y", y)
+          .attr("dy", dy + "em");
+
+      while ((word = words.pop())) {
+        line.push(word);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > width) {
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [word];
+          tspan = text
+            .append("tspan")
+            .attr("x", 0)
+            .attr("y", y)
+            .attr("dy", ++lineNumber * lineHeight + dy + "em")
+            .text(word);
+        }
+      }
+    });
+  }
+
+  var svgCKFR = d3
+    .select("div#canvasCKFR")
+    .append("svg")
+    .attr("width", 800)
+    .attr("height", 800)
+    // Für Educa Homepage
+    .attr("viewBox", "0 0 400 850")
+    // Um daran zu arbeiten
+    //.attr("viewBox", "0 0 1000 600")
+    .attr("preserveAspectRatio", "xMinYMin meet");
+
+  (margin = 20),
+    (diameter = +svgCKFR.attr("width")),
+    (gCKFR = svgCKFR
+      .append("g")
+      .attr(
+        "transform",
+        "translate(" + diameter / 2 + "," + diameter / 2 + ")"
+      ));
+
+  var colorCKFR = d3
+    .scaleLinear()
+    .domain([-1, 5])
+    .range(["rgb(255, 15, 72)", "rgb(94,68,88)"]);
+
+  var packCKFR = d3
+    .pack()
+    .size([diameter - margin, diameter - margin])
+    .padding(2);
+
+  d3.json("kriminalstatistik.json", function (error, root) {
+    if (error) throw error;
+
+    root = d3
+      .hierarchy(root)
+      .sum(function (d) {
+        return d.size;
+      })
+      .sort(function (a, b) {
+        return b.value - a.value;
+      });
+
+    var focusCKFR = root,
+      nodesCKFR = packCKFR(root).descendants(),
+      view;
+
+    var circleCKFR = gCKFR
+      .selectAll("circle")
+      .data(nodesCKFR)
+      .enter()
+      .append("circle")
+      .attr("class", function (d) {
+        return d.parent
+          ? d.children
+            ? "node"
+            : "node node--leaf"
+          : "node node--root";
+      })
+      .style("fill", function (d) {
+        return d.children ? colorCKFR(d.depth) : "rgb(219,214,212)";
+      })
+      .on("click", function (d) {
+        if (focusCKFR !== d) {
+          zoom(d);
+          d3.event.stopPropagation();
+          // Update the paragraph with the node's name and size
+          d3.select("#tooltipCKFR").html(
+            "<b>Définition de " +
+              d.data.name_FR +
+              ":</b> " +
+              (d.data.definition_fr || "N/A") +
+              "<br>" +
+              "<b>Nombre de délits annuels (moyenne des années 2021-2023):</b> " +
+              d.data.size
+          );
+        }
+      });
+
+    var textCKFR = gCKFR
+      .selectAll("text")
+      .data(nodesCKFR)
+      .enter()
+      .append("text")
+      .attr("class", "labelCKFR")
+      .style("fill-opacity", function (d) {
+        return d.parent === root ? 1 : 1;
+      })
+      .style("display", function (d) {
+        return d.parent === root ? "inline" : "none";
+      })
+      .text(function (d) {
+        return d.data.name_FR;
+      })
+      .call(wrapText, 200);
+
+    var nodeCKFR = gCKFR.selectAll("circle,text");
+
+    svgCKFR.style("background", "#ffffff").on("click", function () {
+      zoom(root);
+    });
+
+    zoomTo([root.x, root.y, root.r * 2 + margin]);
+
+    function zoom(d) {
+      var focus0CKFR = focusCKFR;
+      focusCKFR = d;
+
+      var transitionCKFR = d3
+        .transition()
+        .duration(d3.event.altKey ? 7500 : 750)
+        .tween("zoom", function (d) {
+          var i = d3.interpolateZoom(view, [
+            focusCKFR.x,
+            focusCKFR.y,
+            focusCKFR.r * 2 + margin,
+          ]);
+          return function (t) {
+            zoomTo(i(t));
+          };
+        });
+
+      transitionCKFR
+        .selectAll("text")
+        //.call(wrapText, 250)
+        .filter(function (d) {
+          return d.parent === focusCKFR || this.style.display === "inline";
+        })
+        .style("fill-opacity", function (d) {
+          return d.parent === focusCKFR ? 1 : 0;
+        })
+        .on("start", function (d) {
+          if (d.parent === focusCKFR) this.style.display = "inline";
+        })
+        .on("end", function (d) {
+          if (d.parent !== focusCKFR) this.style.display = "inline";
+        });
+
+      // // Apply wrapping again after transition ends
+      // transition.on("end", function () {
+      //   gCKFR.selectAll("text").call(wrapText, 250);
+      // });
+    }
+
+    function zoomTo(v) {
+      var k = diameter / v[2];
+      view = v;
+      nodeCKFR.attr("transform", function (d) {
+        return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")";
+      });
+      circleCKFR.attr("r", function (d) {
+        return d.r * k;
+      });
+    }
+  });
+</script>
