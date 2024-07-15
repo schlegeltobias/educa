@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<style>
+  .wrapperCKDE {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-template-columns: 49% 49%;
+    grid-template-rows: 1fr 50px;
+  }
+
+  @font-face {
+    font-family: educaSans;
+    src: url(Educa_Sans_Webfonts/EducaSans-Regular.woff2);
+  }
+
+  #titleDropdownCKDE,
+  #DropdownCKDE,
+  .labelCKDE,
+  #tooltipCKDE {
+    font-size: 0.95rem;
+    font-family: educaSans, Arial, sans-serif;
+    text-anchor: middle;
+    vertical-align: middle;
+  }
+
+  @media screen and (min-width: 480px) {
+    #titleDropdownCKDE,
+    #DropdownCKDE,
+    .labelCKDE #tooltipCKDE {
+      font-size: 0.95rem;
+      font-family: educaSans, Arial, sans-serif;
+      text-anchor: middle;
+      vertical-align: middle;
+    }
+  }
+
+  .node {
+    cursor: pointer;
+  }
+
+  .node:hover {
+    stroke: rgb(16, 26, 58);
+    stroke-width: 2px;
+  }
+
+  .node--leaf {
+    fill: white;
+  }
+
+  .labelCKDE,
+  .node--root {
+    pointer-events: none;
+  }
+
+  .svg-containerCKDE {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    overflow: hidden;
+    grid-row: 1/1;
+    grid-column: 1/-1;
+  }
+
+  #tooltipCKDE {
+    grid-row: 2/-1;
+    grid-column: 1/1;
+  }
+</style>
+<div class="wrapperCKDE">
+  <div id="canvasCKDE" class="svg-containerCKDE"></div>
+  <p id="tooltipCKDE"></p>
+</div>
+
+<!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+<script src="d3.v4.min.js"></script>
+
+<script>
+
+var  textWrapWidth = 180
+
+  // Define a formatter for numbers
+  var customLocaleCKDE = d3.formatLocale({
+    decimal: ".",
+    thousands: "'",
+    grouping: [3],
+  });
+
+  var numberFormatterCKDE = customLocaleCKDE.format(",");
+  // Define clickedElement for zoom function
+  var clickedElement = null;
+
+// Define text wrapping function
+// Define text wrapping function
+// Define text wrapping function
+function wrapText(text, width) {
+    text.each(function () {
+        var text = d3.select(this),
+            words = text.text().split(/(\s+)/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            y = text.attr("y"),
+            dy = parseFloat(text.attr("dy")) || 0,
+            tspan = text
+                .text(null)
+                .append("tspan")
+                .attr("x", 0)
+                .attr("y", y)
+                .attr("dy", dy + "em");
+
+        while ((word = words.pop())) {
+            line.push(word);
+            tspan.text(line.join(""));
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop();
+                tspan.text(line.join(""));
+                line = [word];
+                tspan = text.append("tspan")
+                    .attr("x", 0)
+                    .attr("y", y)
+                    .attr("dy", lineHeight + "em") // Fixed line height for each new line
+                    .text(word);
+            }
+        }
+    });
+}
+
+
+
+
+
+  var svgCKDE = d3
+    .select("div#canvasCKDE")
+    .append("svg")
+    .attr("width", 800)
+    .attr("height", 800)
+    // Für Educa Homepage
+    .attr("viewBox", "0 0 400 850")
+    // Um daran zu arbeiten
+    //.attr("viewBox", "0 0 1000 600")
+    .attr("preserveAspectRatio", "xMinYMin meet");
+
+  (margin = 20),
+    (diameter = +svgCKDE.attr("width")),
+    (gCKDE = svgCKDE
+      .append("g")
+      .attr(
+        "transform",
+        "translate(" + diameter / 2 + "," + diameter / 2 + ")"
+      ));
+
+  var colorCKDE = d3
+    .scaleLinear()
+    .domain([-1, 5])
+    .range(["rgb(255, 15, 72)", "rgb(94,68,88)"]);
+
+  var packCKDE = d3
+    .pack()
+    .size([diameter - margin, diameter - margin])
+    .padding(2);
+
+  d3.json("kriminalstatistik.json", function (error, root) {
+    if (error) throw error;
+
+    root = d3
+      .hierarchy(root)
+      .sum(function (d) {
+        return d.size;
+      })
+      .sort(function (a, b) {
+        return b.value - a.value;
+      });
+
+    var focusCKDE = root,
+      nodesCKDE = packCKDE(root).descendants(),
+      view;
+
+    var circleCKDE = gCKDE
+      .selectAll("circle")
+      .data(nodesCKDE)
+      .enter()
+      .append("circle")
+      .attr("class", function (d) {
+        return d.parent
+          ? d.children
+            ? "node"
+            : "node node--leaf"
+          : "node node--root";
+      })
+      .style("fill", function (d) {
+        return d.children ? colorCKDE(d.depth) : "rgb(220, 197, 187";
+        // Wenn der "root-Kreis" weiss sein soll unterer Code statt darüberliegende Linie nutzen
+        // return d.depth === 0
+        //   ? "none"
+        //   : d.children
+        //   ? colorCKDE(d.depth)
+        //   : "rgb(219,214,212)";
+      })
+      .on("click", function (d) {
+        clickedElement = d;
+        if (focusCKDE !== d) {
+          zoom(d);
+          d3.event.stopPropagation();
+          // Update the paragraph with the node's name and size
+          d3.select("#tooltipCKDE").html(
+            "<b>Definition von " +
+              d.data.name_DE +
+              ":</b> " +
+              (d.data.definition_de || "N/A") +
+              "<br>" +
+              "<b>Anzahl jährliche Straftaten (Durchschnitt der Jahre 2021-2023):</b> " +
+              numberFormatterCKDE(d.data.size)
+          );
+        }
+      });
+
+    var textCKDE = gCKDE
+      .selectAll("text")
+      .data(nodesCKDE)
+      .enter()
+      .append("text")
+      .attr("class", "labelCKDE")
+      .style("fill-opacity", function (d) {
+        return d.parent === root ? 1 : 1;
+      })
+      .style("display", function (d) {
+        return d.parent === root ? "inline" : "none";
+      })
+      .text(function (d) {
+        return d.data.name_DE;
+      })
+      .call(wrapText, textWrapWidth);
+
+    var nodeCKDE = gCKDE.selectAll("circle,text");
+
+    svgCKDE.style("background", "#ffffff").on("click", function () {
+      zoom(root);
+    });
+
+    zoomTo([root.x, root.y, root.r * 2 + margin]);
+
+    function zoom(d) {
+      // Stores the current focus before updating it
+      var focus0CKDE = focusCKDE;
+      // updates the new focus d
+      focusCKDE = d;
+
+      // Initiates transition for graphical elements
+      var transitionCKDE = d3
+        .transition()
+        // sets the duration to 750 millisecons, or 750 milliseconds it the alt key is held down during the event
+        .duration(d3.event.altKey ? 7500 : 750)
+        // creates a tween, i.e., the process to generate intermediate frames between two key frames to create the appearnace of smooth motion or transition
+        .tween("zoom", function (d) {
+          // computes an interpolator for a smooth zoom transition
+          var i = d3.interpolateZoom(view, [
+            focusCKDE.x,
+            focusCKDE.y,
+            focusCKDE.r * 2.2 + margin,
+          ]);
+          return function (t) {
+            zoomTo(i(t));
+          };
+        });
+
+      // Defines the transition of text elements 
+      transitionCKDE
+        .selectAll("text")
+        .filter(function (d) {
+          var isFocusedParentOrInline = d.parent === focusCKDE || this.style.display === "inline";
+          var isClickedLeaf = (d === clickedElement) && (!d.children || d.children.length === 0);
+          return isFocusedParentOrInline || isClickedLeaf;
+        })
+        .style("fill-opacity", function (d) {
+          return d.parent === focusCKDE || (d === clickedElement && (!d.children || d.children.length === 0)) ? 1 : 0;
+        })
+        .on("start", function (d) {
+          if (d.parent === focusCKDE || (d === clickedElement && (!d.children || d.children.length === 0))) {
+            this.style.display = "inline";
+          }
+          d3.select(this).call(wrapText, textWrapWidth);
+        })
+        .on("end", function (d) {
+          if (d.parent !== focusCKDE && !(d === clickedElement && (!d.children || d.children.length === 0))) {
+            this.style.display = "none";
+          }
+          // Reapply text wrapping after transition ends
+          d3.select(this).call(wrapText, textWrapWidth);
+        });
+    }
+
+    function zoomTo(v) {
+      var k = diameter / v[2];
+      view = v;
+      nodeCKDE.attr("transform", function (d) {
+        return (
+          "translate(" +
+          (d.x - view[0]) * k +
+          "," +
+          (d.y - view[1]) * k +
+          ")"
+        );
+      });
+      circleCKDE.attr("r", function (d) {
+        return d.r * k;
+      });
+    }
+  });
+</script>
