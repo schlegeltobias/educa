@@ -1,0 +1,101 @@
+﻿cell;field;level;ambition
+111;Recht;Gemeinde;Gemässigt
+112;Recht;Gemeinde;Mittel
+113;Recht;Gemeinde;Hoch
+114;Recht;Gemeinde;Sehr hoch
+121;Recht;Kanton;Gemässigt
+122;Recht;Kanton;Mittel
+123;Recht;Kanton;Hoch
+124;Recht;Kanton;Sehr hoch
+131;Recht;Interkantonal;Gemässigt
+132;Recht;Interkantonal;Mittel
+133;Recht;Interkantonal;Hoch
+134;Recht;Interkantonal;Sehr hoch
+141;Recht;Bund;Gemässigt
+142;Recht;Bund;Mittel
+143;Recht;Bund;Hoch
+144;Recht;Bund;Sehr hoch
+151;Recht;Nicht-staatlich;Gemässigt
+152;Recht;Nicht-staatlich;Mittel
+153;Recht;Nicht-staatlich;Hoch
+154;Recht;Nicht-staatlich;Sehr hoch
+211;Organisation;Gemeinde;Gemässigt
+212;Organisation;Gemeinde;Mittel
+213;Organisation;Gemeinde;Hoch
+214;Organisation;Gemeinde;Sehr hoch
+221;Organisation;Kanton;Gemässigt
+222;Organisation;Kanton;Mittel
+223;Organisation;Kanton;Hoch
+224;Organisation;Kanton;Sehr hoch
+231;Organisation;Interkantonal;Gemässigt
+232;Organisation;Interkantonal;Mittel
+233;Organisation;Interkantonal;Hoch
+234;Organisation;Interkantonal;Sehr hoch
+241;Organisation;Bund;Gemässigt
+242;Organisation;Bund;Mittel
+243;Organisation;Bund;Hoch
+244;Organisation;Bund;Sehr hoch
+251;Organisation;Nicht-staatlich;Gemässigt
+252;Organisation;Nicht-staatlich;Mittel
+253;Organisation;Nicht-staatlich;Hoch
+254;Organisation;Nicht-staatlich;Sehr hoch
+311;Daten;Gemeinde;Gemässigt
+312;Daten;Gemeinde;Mittel
+313;Daten;Gemeinde;Hoch
+314;Daten;Gemeinde;Sehr hoch
+321;Daten;Kanton;Gemässigt
+322;Daten;Kanton;Mittel
+323;Daten;Kanton;Hoch
+324;Daten;Kanton;Sehr hoch
+331;Daten;Interkantonal;Gemässigt
+332;Daten;Interkantonal;Mittel
+333;Daten;Interkantonal;Hoch
+334;Daten;Interkantonal;Sehr hoch
+341;Daten;Bund;Gemässigt
+342;Daten;Bund;Mittel
+343;Daten;Bund;Hoch
+344;Daten;Bund;Sehr hoch
+351;Daten;Nicht-staatlich;Gemässigt
+352;Daten;Nicht-staatlich;Mittel
+353;Daten;Nicht-staatlich;Hoch
+354;Daten;Nicht-staatlich;Sehr hoch
+411;Dienste;Gemeinde;Gemässigt
+412;Dienste;Gemeinde;Mittel
+413;Dienste;Gemeinde;Hoch
+414;Dienste;Gemeinde;Sehr hoch
+421;Dienste;Kanton;Gemässigt
+422;Dienste;Kanton;Mittel
+423;Dienste;Kanton;Hoch
+424;Dienste;Kanton;Sehr hoch
+431;Dienste;Interkantonal;Gemässigt
+432;Dienste;Interkantonal;Mittel
+433;Dienste;Interkantonal;Hoch
+434;Dienste;Interkantonal;Sehr hoch
+441;Dienste;Bund;Gemässigt
+442;Dienste;Bund;Mittel
+443;Dienste;Bund;Hoch
+444;Dienste;Bund;Sehr hoch
+451;Dienste;Nicht-staatlich;Gemässigt
+452;Dienste;Nicht-staatlich;Mittel
+453;Dienste;Nicht-staatlich;Hoch
+454;Dienste;Nicht-staatlich;Sehr hoch
+511;Infrastruktur;Gemeinde;Gemässigt
+512;Infrastruktur;Gemeinde;Mittel
+513;Infrastruktur;Gemeinde;Hoch
+514;Infrastruktur;Gemeinde;Sehr hoch
+521;Infrastruktur;Kanton;Gemässigt
+522;Infrastruktur;Kanton;Mittel
+523;Infrastruktur;Kanton;Hoch
+524;Infrastruktur;Kanton;Sehr hoch
+531;Infrastruktur;Interkantonal;Gemässigt
+532;Infrastruktur;Interkantonal;Mittel
+533;Infrastruktur;Interkantonal;Hoch
+534;Infrastruktur;Interkantonal;Sehr hoch
+541;Infrastruktur;Bund;Gemässigt
+542;Infrastruktur;Bund;Mittel
+543;Infrastruktur;Bund;Hoch
+544;Infrastruktur;Bund;Sehr hoch
+551;Infrastruktur;Nicht-staatlich;Gemässigt
+552;Infrastruktur;Nicht-staatlich;Mittel
+553;Infrastruktur;Nicht-staatlich;Hoch
+554;Infrastruktur;Nicht-staatlich;Sehr hoch
