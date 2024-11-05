@@ -1,9 +1,9 @@
 ﻿cellField;cellLevel;cellAmbition;development
-1;1;1;"""Test 1 111"""
-1;1;1;"""Test 2 111"""
-1;1;1;"""Test 3 111"""
-5;5;4;"""Test 1 554"""
-5;5;4;"""Test 2 554"""
-1;4;4;"""Test 144"""
-2;5;1;"""Test 251"""
-5;5;3;"""Test 553"""
+1;1;1;Test 1 111
+1;1;1;Test 2 111
+1;1;1;Test 3 111
+5;5;4;Test 1 554
+5;5;4;Test 2 554
+1;4;4;Test 144
+2;5;1;Test 251
+5;5;3;Test 553
