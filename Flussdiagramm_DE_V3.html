@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      /*---------------*/
+      /* Text in Boxes */
+      /*---------------*/
+
+      .wrapperSNDE {
+        display: grid;
+        grid-column-gap: 1rem;
+        grid-template-columns: 49% 49%;
+        grid-template-rows: 50px 1fr;
+      }
+
+      @font-face {
+        font-family: educaSans;
+        src: url(Educa_Sans_Webfonts/EducaSans-Regular.woff2);
+      }
+
+      .labelShapesSNDE,
+      .labelShapesBCTypeSNDE,
+      .legendTextSNDE {
+        font-size: 1.6vw;
+        font-family: educaSans, Arial, sans-serif;
+        text-anchor: middle;
+        vertical-align: middle;
+      }
+
+      @media screen and (min-width: 480px) {
+        .labelShapesSNDE,
+        .labelShapesBCTypeSNDE,
+        .legendTextSNDE {
+          font-size: 4.5pt;
+          font-family: educaSans, Arial, sans-serif;
+          text-anchor: middle;
+          vertical-align: middle;
+        }
+      }
+
+      .labelShapesBCTypeSNDE {
+        fill: #101a3a;
+      }
+
+      .tooltipSNDE {
+        font-size: 0.8rem;
+        font-family: educaSans, Arial, sans-serif;
+        display: none;
+        position: absolute;
+        background-color: #eeeeee;
+        opacity: 0.9;
+        padding: 8px;
+        border: 0px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      /*--------------------------------*/
+      /* Formating of the SVG Container */
+      /*--------------------------------*/
+
+      .svg-containerSNDE {
+        display: inline-block;
+        position: relative;
+        vertical-align: top;
+        overflow: hidden;
+        grid-row: 1/-1;
+        grid-column: 1/-1;
+      }
+
+      .markerDefsSNDE {
+        display: block;
+        width: 0;
+        height: 0;
+      }
+    </style>
+  </head>
+
+  <!-- <script src="https://d3js.org/d3.v6.min.js"></script> -->
+  <script src="d3.v6.min.js"></script>
+
+  <body>
+    <div class="wrapperSNDE">
+      <div id="canvasSNDE" class="svg-containerSNDE"></div>
+      <div id="vctooltipSNDE"></div>
+      <svg class="markerDefsSNDE">
+        <defs>
+          <marker
+            id="arrowYesSNDE"
+            markerUnits="strokeWidth"
+            markerWidth="4"
+            markerHeight="4"
+            viewBox="0 0 12 12"
+            refX="6"
+            refY="6"
+            orient="auto"
+          >
+            <path d="M2,2 L10,6 L2,10 L2,2" style="fill: #529c9a"></path>
+          </marker>
+        </defs>
+      </svg>
+      <svg class="markerDefsSNDE">
+        <defs>
+          <marker
+            id="arrowNoSNDE"
+            markerUnits="strokeWidth"
+            markerWidth="4"
+            markerHeight="4"
+            viewBox="0 0 12 12"
+            refX="6"
+            refY="6"
+            orient="auto"
+          >
+            <path d="M2,2 L10,6 L2,10 L2,2" style="fill: #cd003a"></path>
+          </marker>
+        </defs>
+      </svg>
+      <svg class="markerDefsSNDE">
+        <defs>
+          <marker
+            id="arrowStartSNDE"
+            markerUnits="strokeWidth"
+            markerWidth="4"
+            markerHeight="4"
+            viewBox="0 0 12 12"
+            refX="6"
+            refY="6"
+            orient="auto"
+          >
+            <path d="M2,2 L10,6 L2,10 L2,2" style="fill: #ccc4c2"></path>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <script>
+      //-----------------------//
+      // Definition Dimensions //
+      //-----------------------//
+
+      var rhombWidthSNDE = 100;
+      var rhombHeightSNDE = 50;
+      var colMarginSNDE = rhombWidthSNDE*0.1;
+      var rowMarginSNDE = rhombHeightSNDE*0.2;
+      var colWidthSNDE = rhombWidthSNDE + colMarginSNDE
+      var endPointWidthSNDE = rhombWidthSNDE * 0.75;
+      var endPointHeightSNDE = rhombHeightSNDE * 0.75;
+      var startPointWidthSNDE = rhombWidthSNDE * 0.75;
+      var startPointHeightSNDE = rhombHeightSNDE * 0.75;
+      var col0SNDE = 0;
+      var col1SNDE = col0SNDE + colMarginSNDE;
+      var col2SNDE = col1SNDE + colWidthSNDE;
+      var col3SNDE = col2SNDE + colWidthSNDE / 2;
+      var col4SNDE = col3SNDE + colWidthSNDE /2;
+      var col5SNDE = col4SNDE + colWidthSNDE;
+      var col1MidSNDE = col1SNDE + rhombWidthSNDE / 2;
+      var col2MidSNDE = col2SNDE + rhombWidthSNDE / 2;
+      var col3MidSNDE = col3SNDE + rhombWidthSNDE / 2;
+      var col4MidSNDE = col4SNDE + rhombWidthSNDE / 2;
+      var col5MidSNDE = col5SNDE + rhombWidthSNDE / 2;
+      var col1EndSNDE = col1SNDE + rhombWidthSNDE;
+      var col2EndSNDE = col2SNDE + rhombWidthSNDE;
+      var col3EndSNDE = col3SNDE + rhombWidthSNDE;
+      var col4EndSNDE = col4SNDE + rhombWidthSNDE;
+      var col5EndSNDE = col5SNDE + rhombWidthSNDE;
+      var row0SNDE = 10;
+      var rowWidthSNDE = rhombHeightSNDE + rowMarginSNDE
+      var row1SNDE = row0SNDE + rowWidthSNDE;
+      var row2SNDE = row1SNDE + rowWidthSNDE;
+      var row3SNDE = row2SNDE + rowWidthSNDE;
+      var row4SNDE = row3SNDE + rowWidthSNDE;
+      var row5SNDE = row4SNDE + rowWidthSNDE;
+      var row6SNDE = row5SNDE + rowWidthSNDE;
+      var row7SNDE = row6SNDE + rowWidthSNDE;
+      var row0MidSNDE = row0SNDE + rhombHeightSNDE / 2;
+      var row1MidSNDE = row1SNDE + rhombHeightSNDE / 2;
+      var row2MidSNDE = row2SNDE + rhombHeightSNDE / 2;
+      var row3MidSNDE = row3SNDE + rhombHeightSNDE / 2;
+      var row4MidSNDE = row4SNDE + rhombHeightSNDE / 2;
+      var row5MidSNDE = row5SNDE + rhombHeightSNDE / 2;
+      var row6MidSNDE = row6SNDE + rhombHeightSNDE / 2;
+      var row7MidSNDE = row7SNDE + rhombHeightSNDE / 2;
+      var row0EndSNDE = row0SNDE + rhombHeightSNDE;
+      var row1EndSNDE = row1SNDE + rhombHeightSNDE;
+      var row2EndSNDE = row2SNDE + rhombHeightSNDE;
+      var row3EndSNDE = row3SNDE + rhombHeightSNDE;
+      var row4EndSNDE = row4SNDE + rhombHeightSNDE;
+      var row5EndSNDE = row5SNDE + rhombHeightSNDE;
+      var row6EndSNDE = row6SNDE + rhombHeightSNDE;
+      var row7EndSNDE = row7SNDE + rhombHeightSNDE;
+      var lineHeight = rhombHeightSNDE*0.2;
+      var gap2LinerSNDE = rhombHeightSNDE*0.45;
+      var gap3LinerSNDE = rhombHeightSNDE*0.4;
+      var gap4LinerSNDE = rhombHeightSNDE*0.35;
+      var arrowMarginEndSNDE = 2;
+      var arrowMarginStartSNDE = 1;
+      var edgeSetOffSNDE = 6;
+      var textOffsetRhombSNDE = 40;
+      var textOffsetEndpointSNDE = 20;
+      var textOffsetStartpointSNDE = 20;
+
+
+      //---------------------------//
+      // Definition Line Generator //
+      //---------------------------//
+
+      var lineGeneratorSNDE = d3.line();
+      var curveGeneratorSNDE = d3
+        .line()
+        .curve(d3.curveCardinalClosed.tension(1));
+
+      //-------------------//
+      // Definition colors //
+      //-------------------//
+
+      var jade = "#529c9a";
+      var rubin = "#cd003a";
+      var kobalt = "#2c4262";
+      var saphire = "#101a3a";
+      var gray = "#ccc4c2";
+      var quarz = "#c69e8e";
+      var bernstein = "#f0c84a";
+      var amethyst = "#5e4458";
+      var granat = "#940a2d";
+      var lightGray = "#eeeeee";
+      var thulit = "#ff0f48";
+      var sand = "#ccc4c2";
+      var white = "#fff";
+      var black = "000"
+
+      //--------------//
+      // Text wrapper //
+      //--------------//
+
+      // Wrapper
+      function myWrapSNDE(text, width, xPosition) {
+        // runs for each matched element
+        text.each(function () {
+          // Selects current DOM element
+          var text = d3.select(this),
+            // Splits string into an array of substrings and returns the array in reversed order.
+            words = text.text().split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            // inherits the x and y attributes of the text the function is called on.
+            y = text.attr("y"),
+            x = text.attr("x");
+          // parses a string argument and returns a floating point number --> number within the quotation mark
+          (dy = parseFloat(text.attr("dy"))),
+            // Defines the initial tspan
+            (tspan = text
+              .text(null)
+              .append("tspan")
+              .attr("x", x)
+              .attr("y", y)
+              .attr("dy", dy + "em"));
+          // As long as the word array is the same as the reversed and parsed array excl. the last word, the word is added (push) to the current line --> scan through entire array
+          while ((word = words.pop())) {
+            line.push(word);
+            // Returns the array as a string
+            tspan.text(line.join(" "));
+            // the length of the current tspan is larger than the defined width of the textfield, drop the last element of the current line.
+            if (tspan.node().getComputedTextLength() > width) {
+              //var xline = col1MidSNDE;
+              line.pop();
+              // Then again return the array as a string
+              tspan.text(line.join(" "));
+              // ?
+              line = [word];
+              // append a new tspan to the text with the following attributes
+              tspan = text
+                .append("tspan")
+                .attr("x", xPosition)
+                .attr("y", y)
+                .attr("dy", lineHeight + "em")
+                .text(word);
+            }
+          }
+        });
+      }
+
+      //--------------//
+      // Generate SVG //
+      //--------------//
+
+      var svgSNDE = d3
+        .select("div#canvasSNDE")
+        .append("svg")
+        // Für Educa Homepage
+        //.attr("viewBox", "0 0 255 400")
+        // Um daran zu arbeiten
+        .attr("viewBox", "0 0 500 600")
+        .attr("preserveAspectRatio", "xMinYMin meet");
+
+      //---------//
+      //---------//
+      // Tooltip //
+      //---------//
+      //---------//
+
+      //-------------//
+      // Define Text //
+      //-------------//
+
+      var textDecisionNode1SNDE =
+        "";
+      var textDecisionNode2SNDE =
+        "";
+      var textDecisionNode3SNDE =
+        "";
+      var textDecisionNode4SNDE =
+        "";
+      var textDecisionNode5SNDE =
+        "";
+      var textDecisionNode6SNDE =
+        "";
+      var textDecisionNode7SNDE =
+        "";
+      var textEndNode1SNDE =
+        "";
+      var textEndNode2SNDE =
+        "";
+      var textEndNode3SNDE =
+        "";
+      var textEndNode4SNDE =
+        "";
+
+        var textCrossingNode1SNDE = "";
+
+        var textCrossingNode2SNDE = "";
+
+        var textDecisionNode8SNDE = "";
+
+        var textDecisionNode9SNDE = "";
+
+        var textCrossingNode3SNDE = "";
+
+      //----------------//
+      // Define Tooltip //
+      //----------------//
+
+      // Function to get the viewport width
+      function getViewportWidthSNDE() {
+        return Math.max(
+          document.documentElement.clientWidth || 0,
+          window.innerWidth || 0
+        );
+      }
+
+      var tooltipSNDE = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltipSNDE")
+        .style("display", "none")
+        .style("pointer-events", "none")
+        .style("position", "absolute")
+        .style("max-width", getViewportWidthSNDE() / 3 + "px");
+
+      const windowWidthSNDE = document.documentElement.clientWidth;
+      const windowHeightSNDE = document.documentElement.clientHeight;
+      var tooltipOffsetXSNDE = 20; // Set the desired horizontal offset from the mouse cursor
+      var tooltipOffsetYSNDE = 20; // Set the desired vertical offset from the mouse cursor
+      var tooltipOffsetXSNDELeft = -20;
+
+      //-----------------------------//
+      // Define mouseevent functions //
+      //-----------------------------//
+
+      // Function to handle mouseover, mousemove, and mouseout events together
+      function addTooltipBehaviorSNDE(tooltipTextSNDE, groupClassSNDE) {
+        return function (event) {
+          const tooltipWidtSNDEh = windowWidthSNDE * 0.4;
+          const tooltipHeightSNDE = 100;
+
+          const mouseXSNDE = event.pageX;
+          const mouseYSNDE = event.pageY;
+          let tooltipXSNDE, tooltipYSNDE;
+
+          if (
+            mouseXSNDE + tooltipWidtSNDEh + tooltipOffsetXSNDE >
+            windowWidthSNDE
+          ) {
+            tooltipXSNDE = mouseXSNDE - tooltipWidtSNDEh;
+          } else {
+            tooltipXSNDE = mouseXSNDE + tooltipOffsetXSNDE;
+          }
+
+          if (
+            mouseYSNDE + tooltipHeightSNDE + tooltipOffsetYSNDE >
+            windowHeightSNDE
+          ) {
+            tooltipYSNDE = mouseYSNDE - tooltipHeightSNDE - tooltipOffsetYSNDE;
+          } else {
+            tooltipYSNDE = mouseYSNDE + tooltipOffsetYSNDE;
+          }
+
+          if (event.type === "mouseover") {
+            tooltipSNDE
+              .style("display", "block")
+              .style("left", tooltipXSNDE + "px")
+              .style("top", tooltipYSNDE + "px")
+              .html(tooltipTextSNDE);
+
+            d3.selectAll(groupClassSNDE).select("path").attr("fill", bernstein);
+            d3.selectAll(groupClassSNDE).select("text").attr("fill", kobalt);
+            d3.selectAll(groupClassSNDE).select("rect").attr("fill", bernstein);
+          } else if (event.type === "mousemove") {
+            tooltipSNDE
+              .style("left", tooltipXSNDE + "px")
+              .style("top", tooltipYSNDE + "px");
+          } else if (event.type === "mouseout") {
+            tooltipSNDE.style("display", "none");
+            d3.selectAll(groupClassSNDE).select("path").attr("fill", kobalt);
+            d3.selectAll(groupClassSNDE).select("text").attr("fill", white);
+            d3.selectAll(groupClassSNDE).selectAll("text.textCrossing").attr("fill", black);
+            d3.selectAll(groupClassSNDE).selectAll("rect.rectCrossing").attr("fill", sand)
+            d3.selectAll(groupClassSNDE).selectAll("rect.rectEndNode").attr("fill", amethyst);
+          }
+        };
+      }
+
+      //--------------------------------//
+      //--------------------------------//
+      // Define static shapes and texts //
+      //--------------------------------//
+      //--------------------------------//
+
+      //-------------------//
+      // Set up Startpoint //
+      //-------------------//
+
+      // Shape
+      var startPointSNDE = svgSNDE
+        .append("rect")
+        .attr("class", "EndpointSNDE")
+        .attr("x", col3SNDE+(rhombWidthSNDE-startPointWidthSNDE)/2)
+        .attr("y", row0SNDE)
+        .attr("width", startPointWidthSNDE)
+        .attr("height", startPointHeightSNDE)
+        .attr("fill", sand)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Label
+      var startpointLabelSNDE = svgSNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Start")
+        .call(myWrapSNDE, startPointWidthSNDE - textOffsetStartpointSNDE, col3MidSNDE)
+        .attr("x", col3MidSNDE)
+        .attr("y", row0MidSNDE - 4);
+ 
+      //---------------//
+      // Set up Rhombs //
+      //---------------//
+
+      var rhombsSNDE = [
+        [0, rhombHeightSNDE / 2],
+        [rhombWidthSNDE / 2, 0],
+        [rhombWidthSNDE, rhombHeightSNDE / 2],
+        [rhombWidthSNDE / 2, rhombHeightSNDE],
+        [0, rhombHeightSNDE / 2],
+      ];
+
+      var lineRhombsSNDE = lineGeneratorSNDE(rhombsSNDE);
+
+      //-------------------------------------//
+      //-------------------------------------//
+      // Define interactive shapes and texts //
+      //-------------------------------------//
+      //-------------------------------------//
+
+      //----------------//
+      //----------------//
+      // Decision nodes //
+      //----------------//
+      //----------------//
+
+      //---------------------//
+      // First decision Node //
+      //---------------------//
+
+      // Group
+      var decisionNode1SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode1SNDE");
+
+      // Shape
+      var rhomb1SNDE = decisionNode1SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col3SNDE + "," + row1SNDE + ")");
+
+      // Text
+      var rhomb1LabelSNDE = decisionNode1SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Liegt eine Zweckänderung vor?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col3MidSNDE)
+        .attr("x", col3MidSNDE)
+        .attr("y", row1SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode1SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode1SNDE, ".decisionNode1SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode1SNDE"));
+
+
+      //----------------------//
+      // Second decision Node //
+      //----------------------//
+
+      // Group
+      var decisionNode2SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode2SNDE");
+
+      // Shape
+      var rhomb2SNDE = decisionNode2SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col3SNDE + "," + row2SNDE + ")");
+
+      // Text
+      var rhomb2LabelSNDE = decisionNode2SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Interne Nutzung der Daten?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col3MidSNDE)
+        .attr("x", col3MidSNDE)
+        .attr("y", row2SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode2SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode2SNDE, ".decisionNode2SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode2SNDE"));
+
+
+      //---------------------//
+      // Third decision Node //
+      //---------------------//
+
+      // Group
+      var decisionNode3SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode3SNDE");
+
+      // Shape
+      var rhomb3SNDE = decisionNode3SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col1SNDE + "," + row3SNDE + ")");
+
+      // Text
+      var rhomb3LabelSNDE = decisionNode3SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Gesetzliche Grundlage für Nutzung?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col1MidSNDE)
+        .attr("x", col1MidSNDE)
+        .attr("y", row3SNDE + gap3LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode3SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode3SNDE, ".decisionNode3SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode3SNDE"));
+
+      //----------------------//
+      // Fourth decision Node //
+      //----------------------//
+
+      // Group
+      var decisionNode4SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode4SNDE");
+
+      // Shape
+      var rhomb4SNDE = decisionNode4SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col5SNDE + "," + row3SNDE + ")");
+
+      // Text
+      var rhomb4LabelSNDE = decisionNode4SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Gesetzliche Grundlage für Bekanntgabe?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col5MidSNDE)
+        .attr("x", col5MidSNDE)
+        .attr("y", row3SNDE + gap3LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode4SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode4SNDE, ".decisionNode4SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode4SNDE"));
+
+      //---------------------//
+      // Fifth decision Node //
+      //---------------------//
+
+      // Group
+      var decisionNode5SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode5SNDE");
+
+      // Shape
+      var rhomb5SNDE = decisionNode5SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col2SNDE + "," + row4SNDE + ")");
+
+      // Text
+      var rhomb5LabelSNDE = decisionNode5SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Zweck der Nutzung mit ursprünglichem Zweck vereinbar?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col2MidSNDE)
+        .attr("x", col2MidSNDE)
+        .attr("y", row4SNDE + gap3LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode5SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode5SNDE, ".decisionNode5SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode5SNDE"));
+
+
+      //---------------------//
+      // Sixth decision Node //
+      //---------------------//
+
+      // Group
+      var decisionNode6SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode6SNDE");
+
+      // Shape
+      var rhomb6SNDE = decisionNode6SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col4SNDE + "," + row4SNDE + ")");
+
+      // Text
+      var rhomb6LabelSNDE = decisionNode6SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Einwilligung der betroffenen Person?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col4MidSNDE)
+        .attr("x", col4MidSNDE)
+        .attr("y", row4SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode6SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode6SNDE, ".decisionNode6SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode6SNDE"));
+
+
+      //-----------------------//
+      // Seventh decision Node //
+      //-----------------------//
+
+      // Group
+      var decisionNode7SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode7SNDE");
+
+      // Shape
+      var rhomb7SNDE = decisionNode7SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col2SNDE + "," + row5SNDE + ")");
+
+      // Text
+      var rhomb7LabelSNDE = decisionNode7SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Nutzung verhältnismässig?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col2MidSNDE)
+        .attr("x", col2MidSNDE)
+        .attr("y", row5SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode7SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode7SNDE, ".decisionNode7SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode7SNDE"));
+
+      //---------------------//
+      // Eight decision Node //
+      //---------------------//
+
+      // Group
+      var decisionNode8SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode8SNDE");
+
+      // Shape
+      var rhomb8SNDE = decisionNode8SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col5SNDE + "," + row5SNDE + ")");
+
+      // Text
+      var rhomb8LabelSNDE = decisionNode8SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Bekanntgabe verhältnismässig?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col5MidSNDE)
+        .attr("x", col5MidSNDE)
+        .attr("y", row5SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode8SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode8SNDE, ".decisionNode8SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode8SNDE"));        
+
+
+      //---------------------//
+      // Ninth decision Node //
+      //---------------------//
+
+      // Group
+      var decisionNode9SNDE = svgSNDE
+        .append("g")
+        .attr("class", "decisionNode9SNDE");
+
+      // Shape
+      var rhomb9SNDE = decisionNode9SNDE
+        .append("path")
+        .attr("d", lineRhombsSNDE)
+        .attr("fill", kobalt)
+        .style("opacity", 1)
+        .attr("transform", "translate(" + col4SNDE + "," + row7SNDE + ")");
+
+      // Text
+      var rhomb9LabelSNDE = decisionNode9SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Bekanntgabe verhältnismässig?")
+        .call(myWrapSNDE, rhombWidthSNDE - textOffsetRhombSNDE, col4MidSNDE)
+        .attr("x", col4MidSNDE)
+        .attr("y", row7SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      decisionNode9SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textDecisionNode9SNDE, ".decisionNode9SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".decisionNode9SNDE"));             
+
+
+
+      //------------------//
+      //------------------//
+      // Set up Endpoints //
+      //------------------//
+      //------------------//
+
+      //--------------------------------//
+      // Endpoint Keine Sekundärnutzung //
+      //--------------------------------//
+
+      // Group
+      var endNode1SNDE = svgSNDE.append("g").attr("class", "endNode1SNDE");
+
+      // Shape
+      var endNode1ShapeSNDE = endNode1SNDE
+        .append("rect")
+        .attr("class", "rectEndNode")
+        .attr("x", col5SNDE + (rhombWidthSNDE - endPointWidthSNDE) / 2)
+        .attr("y", row1SNDE + (rhombHeightSNDE - endPointHeightSNDE) / 2)
+        .attr("width", endPointWidthSNDE)
+        .attr("height", endPointHeightSNDE)
+        .attr("fill", amethyst)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Text
+      var endNode1LabelSNDE = endNode1SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Keine Sekundärnutzung")
+        .call(myWrapSNDE, endPointWidthSNDE - textOffsetEndpointSNDE, col5MidSNDE)
+        .attr("x", col5MidSNDE)
+        .attr("y", row1SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      endNode1SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textEndNode1SNDE, ".endNode1SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".endNode1SNDE"));
+
+
+      //-----------------------------------------//
+      // Endpoint Sekundärnutzung nicht zulässig //
+      //-----------------------------------------//
+
+      // Group
+      var endNode2SNDE = svgSNDE.append("g").attr("class", "endNode2SNDE");
+
+      // Shape
+      var endNode2ShapeSNDE = endNode2SNDE
+        .append("rect")
+        .attr("class", "rectEndNode")
+        .attr("x", col1SNDE + (rhombWidthSNDE - endPointWidthSNDE) / 2)
+        .attr("y", row6SNDE + (rhombHeightSNDE - endPointHeightSNDE) / 2)
+        .attr("width", endPointWidthSNDE)
+        .attr("height", endPointHeightSNDE)
+        .attr("fill", amethyst)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Text
+      var endNode2LabelSNDE = endNode2SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Sekundärnutzung nicht zulässig")
+        .call(myWrapSNDE, endPointWidthSNDE - textOffsetEndpointSNDE, col1MidSNDE)
+        .attr("x", col1MidSNDE)
+        .attr("y", row6SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      endNode2SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textEndNode2SNDE, ".endNode2SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".endNode2SNDE"));        
+
+      //-----------------------------------//
+      // Endpoint Sekundärnutzung zulässig //
+      //-----------------------------------//
+
+      // Group
+      var endNode3SNDE = svgSNDE.append("g").attr("class", "endNode3SNDE");
+
+      // Shape
+      var endNode3ShapeSNDE = endNode3SNDE
+        .append("rect")
+        .attr("class", "rectEndNode")
+        .attr("x", col2SNDE + (rhombWidthSNDE - endPointWidthSNDE) / 2)
+        .attr("y", row6SNDE + (rhombHeightSNDE - endPointHeightSNDE) / 2)
+        .attr("width", endPointWidthSNDE)
+        .attr("height", endPointHeightSNDE)
+        .attr("fill", amethyst)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Text
+      var endNode3LabelSNDE = endNode3SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Sekundärnutzung zulässig")
+        .call(myWrapSNDE, endPointWidthSNDE - textOffsetEndpointSNDE, col2MidSNDE)
+        .attr("x", col2MidSNDE)
+        .attr("y", row6SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      endNode3SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textEndNode3SNDE, ".endNode3SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".endNode3SNDE"));     
+
+
+      //-----------------------------------------------------//
+      // Endpoint Sekundärnutzung Bekanntgabe nicht zulässig //
+      //-----------------------------------------------------//
+
+      // Group
+      var endNode4SNDE = svgSNDE.append("g").attr("class", "endNode4SNDE");
+
+      // Shape
+      var endNode4ShapeSNDE = endNode4SNDE
+        .append("rect")
+        .attr("class", "rectEndNode")
+        .attr("x", col5SNDE + (rhombWidthSNDE - endPointWidthSNDE) / 2)
+        .attr("y", row6SNDE + (rhombHeightSNDE - endPointHeightSNDE) / 2)
+        .attr("width", endPointWidthSNDE)
+        .attr("height", endPointHeightSNDE)
+        .attr("fill", amethyst)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Text
+      var endNode4LabelSNDE = endNode4SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE")
+        .text("Bekanntgabe nicht zulässig")
+        .call(myWrapSNDE, endPointWidthSNDE - textOffsetEndpointSNDE, col5MidSNDE)
+        .attr("x", col5MidSNDE)
+        .attr("y", row6SNDE + gap2LinerSNDE)
+        .attr("fill", white);
+
+      // Event
+      endNode4SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textEndNode4SNDE, ".endNode4SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".endNode4SNDE"));     
+
+
+
+      //------------------//
+      //------------------//
+      // Set up Crossings //
+      //------------------//
+      //------------------//
+
+      //----------------------------//
+      // Crossing Keine Bekanntgabe //
+      //----------------------------//
+
+      // Group
+      var crossingNode1SNDE = svgSNDE.append("g").attr("class", "crossingNode1SNDE");
+
+      // Shape
+      var crossingNode1ShapeSNDE = crossingNode1SNDE
+        .append("rect")
+        .attr("class", "rectCrossing")
+        .attr("x", col1SNDE + (rhombWidthSNDE - startPointWidthSNDE) / 2)
+        .attr("y", row2SNDE + (rhombHeightSNDE - startPointHeightSNDE) / 2)
+        .attr("width", startPointWidthSNDE)
+        .attr("height", startPointHeightSNDE)
+        .attr("fill", sand)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Text
+      var crossingNode1LabelSNDE = crossingNode1SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE textCrossing")
+        .text("Keine Bekanntgabe an Dritte")
+        .call(myWrapSNDE, startPointWidthSNDE - textOffsetEndpointSNDE, col1MidSNDE)
+        .attr("x", col1MidSNDE)
+        .attr("y", row2SNDE + gap2LinerSNDE)
+
+      // Event
+      crossingNode1SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textCrossingNode1SNDE, ".crossingNode1SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".crossingNode1SNDE"));
+
+      //----------------------//
+      // Crossing Bekanntgabe //
+      //----------------------//
+
+      // Group
+      var crossingNode2SNDE = svgSNDE.append("g").attr("class", "crossingNode2SNDE");
+
+      // Shape
+      var crossingNode2ShapeSNDE = crossingNode2SNDE
+        .append("rect")
+        .attr("class", "rectCrossing")
+        .attr("x", col5SNDE + (rhombWidthSNDE - startPointWidthSNDE) / 2)
+        .attr("y", row2SNDE + (rhombHeightSNDE - startPointHeightSNDE) / 2)
+        .attr("width", startPointWidthSNDE)
+        .attr("height", startPointHeightSNDE)
+        .attr("fill", sand)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Text
+      var crossingNode2LabelSNDE = crossingNode2SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE textCrossing")
+        .text("Bekanntgabe an Dritte")
+        .call(myWrapSNDE, startPointWidthSNDE - textOffsetEndpointSNDE, col5MidSNDE)
+        .attr("x", col5MidSNDE)
+        .attr("y", row2SNDE + gap2LinerSNDE)
+
+      // Event
+      crossingNode2SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textCrossingNode2SNDE, ".crossingNode2SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".crossingNode2SNDE"));
+
+      //-------------------------------//
+      // Crossing Bekanntgabe zulässig //
+      //-------------------------------//
+
+      // Group
+      var crossingNode3SNDE = svgSNDE.append("g").attr("class", "crossingNode3SNDE");
+
+      // Shape
+      var crossingNode3ShapeSNDE = crossingNode3SNDE
+        .append("rect")
+        .attr("class", "rectCrossing")
+        .attr("x", col4SNDE + (rhombWidthSNDE - startPointWidthSNDE) / 2)
+        .attr("y", row6SNDE + (rhombHeightSNDE - startPointHeightSNDE) / 2)
+        .attr("width", startPointWidthSNDE)
+        .attr("height", startPointHeightSNDE)
+        .attr("fill", sand)
+        .attr("rx", edgeSetOffSNDE);
+
+      // Text
+      var crossingNode3LabelSNDE = crossingNode3SNDE
+        .append("text")
+        .attr("class", "labelShapesSNDE textCrossing")
+        .text("Bekanntgabe zulässig")
+        .call(myWrapSNDE, startPointWidthSNDE - textOffsetEndpointSNDE, col4MidSNDE)
+        .attr("x", col4MidSNDE)
+        .attr("y", row6SNDE + gap2LinerSNDE)
+
+      // Event
+      crossingNode3SNDE
+        .on(
+          "mouseover",
+          addTooltipBehaviorSNDE(textCrossingNode3SNDE, ".crossingNode3SNDE")
+        )
+        .on("mousemove", addTooltipBehaviorSNDE(null))
+        .on("mouseout", addTooltipBehaviorSNDE(null, ".crossingNode3SNDE"));
+
+
+
+
+
+
+
+
+
+
+      // //--------//
+      // //--------//
+      // // Arrows //
+      // //--------//
+      // //--------//
+
+      // /*-----------------*/
+      // /* Arrows - Labels */
+      // /*-----------------*/
+
+      // var arrowIssuerLegendSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col2SNDE - colMarginSNDE * 0.75)
+      //   .attr("y1", 5)
+      //   .attr("x2", col2SNDE)
+      //   .attr("y2", 5)
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowYesSNDE)");
+
+      // var arrowIssuerLegendLabelSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "legendTextSNDE")
+      //   .attr("x", col2SNDE + 10)
+      //   .attr("y", 5)
+      //   .attr("fill", jade)
+      //   .style("dominant-baseline", "middle")
+      //   .text("Ja");
+
+      // var arrowVerifierLegendSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col2SNDE - colMarginSNDE * 0.75)
+      //   .attr("y1", 15)
+      //   .attr("x2", col2SNDE)
+      //   .attr("y2", 15)
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowNoSNDE)");
+
+      // var arrowIssuerLegendLabelSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "legendTextSNDE")
+      //   .attr("x", col2SNDE + 13)
+      //   .attr("y", 15)
+      //   .attr("fill", rubin)
+      //   .style("dominant-baseline", "middle")
+      //   .text("Nein");
+
+      // //-----------------//
+      // // Complexe Arrows //
+      // //-----------------//
+
+      // // Arrow1No
+      // var arrow1NoDataSNDE = [
+      //   [arrowMarginStartSNDE, 0],
+      //   [-colMarginSNDE / 2, 0],
+      //   [-colMarginSNDE / 2, 3 * rhombHeightSNDE + 3 * rowMarginSNDE],
+      //   [
+      //     -arrowMarginEndSNDE + (rhombWidthSNDE - endPointWidthSNDE) / 2,
+      //     3 * rhombHeightSNDE + 3 * rowMarginSNDE,
+      //   ],
+      // ];
+
+      // var lineArrow1NoSNDE = lineGeneratorSNDE(arrow1NoDataSNDE);
+
+      // var arrow1NoSNDE = svgSNDE
+      //   .append("path")
+      //   .attr("d", lineArrow1NoSNDE)
+      //   .attr("fill", "none")
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5)
+      //   .style("opacity", 1)
+      //   .attr("transform", "translate(" + col1SNDE + "," + row1MidSNDE + ")")
+      //   .attr("marker-end", "url(#arrowNoSNDE)");
+
+      // // Arrow3Yes
+      // var arrow3YesDataSNDE = [
+      //   [-arrowMarginStartSNDE, 0],
+      //   [colMarginSNDE / 4, 0],
+      //   [colMarginSNDE / 4, -2.5 * rhombHeightSNDE - 2.8 * rowMarginSNDE],
+      //   [
+      //     colMarginSNDE + rhombWidthSNDE / 2,
+      //     -2.5 * rhombHeightSNDE - 2.8 * rowMarginSNDE,
+      //   ],
+      //   [
+      //     colMarginSNDE + rhombWidthSNDE / 2,
+      //     -2.5 * rhombHeightSNDE - 2 * rowMarginSNDE - arrowMarginEndSNDE,
+      //   ],
+      // ];
+
+      // var lineArrow3YesSNDE = lineGeneratorSNDE(arrow3YesDataSNDE);
+
+      // var arrow3YesSNDE = svgSNDE
+      //   .append("path")
+      //   .attr("d", lineArrow3YesSNDE)
+      //   .attr("fill", "none")
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5)
+      //   .style("opacity", 1)
+      //   .attr("transform", "translate(" + col1EndSNDE + "," + row3MidSNDE + ")")
+      //   .attr("marker-end", "url(#arrowYesSNDE)");
+
+      // // Arrow4Yes
+      // var arrow4YesDataSNDE = [
+      //   [arrowMarginStartSNDE, 0],
+      //   [-colMarginSNDE / 2, 0],
+      //   [-colMarginSNDE / 2, 3 * rhombHeightSNDE + 3 * rowMarginSNDE],
+      //   [
+      //     -colMarginSNDE +
+      //       arrowMarginEndSNDE -
+      //       (rhombWidthSNDE - endPointWidthSNDE) / 2,
+      //     3 * rhombHeightSNDE + 3 * rowMarginSNDE,
+      //   ],
+      // ];
+
+      // var lineArrow4YesSNDE = lineGeneratorSNDE(arrow4YesDataSNDE);
+
+      // var arrow4YesSNDE = svgSNDE
+      //   .append("path")
+      //   .attr("d", lineArrow4YesSNDE)
+      //   .attr("fill", "none")
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5)
+      //   .style("opacity", 1)
+      //   .attr("transform", "translate(" + col2SNDE + "," + row1MidSNDE + ")")
+      //   .attr("marker-end", "url(#arrowYesSNDE)");
+
+      // // Arrow6No
+      // var arrow6NoDataSNDE = [
+      //   [arrowMarginStartSNDE, 0],
+      //   [-colMarginSNDE / 4, 0],
+      //   [-colMarginSNDE / 4, 1.5 * rhombHeightSNDE + rowMarginSNDE],
+      //   [
+      //     -colMarginSNDE - rhombWidthSNDE / 2,
+      //     1.5 * rhombHeightSNDE + rowMarginSNDE,
+      //   ],
+      //   [
+      //     -colMarginSNDE - rhombWidthSNDE / 2,
+      //     2 * rhombHeightSNDE + 2 * rowMarginSNDE - arrowMarginEndSNDE,
+      //   ],
+      // ];
+
+      // var lineArrow6NoSNDE = lineGeneratorSNDE(arrow6NoDataSNDE);
+
+      // var arrow6NoSNDE = svgSNDE
+      //   .append("path")
+      //   .attr("d", lineArrow6NoSNDE)
+      //   .attr("fill", "none")
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5)
+      //   .style("opacity", 1)
+      //   .attr("transform", "translate(" + col2SNDE + "," + row3MidSNDE + ")")
+      //   .attr("marker-end", "url(#arrowNoSNDE)");
+
+      // // Arrow7No
+      // var arrow7NoDataSNDE = [
+      //   [-arrowMarginStartSNDE, 0],
+      //   [colMarginSNDE / 2, 0],
+      //   [
+      //     colMarginSNDE / 2,
+      //     1.5 * rhombHeightSNDE + 3 * rowMarginSNDE + 0.5 * endPointHeightSNDE,
+      //   ],
+      //   [
+      //     +arrowMarginEndSNDE - (rhombWidthSNDE - endPointWidthSNDE) / 2,
+      //     1.5 * rhombHeightSNDE + 3 * rowMarginSNDE + 0.5 * endPointHeightSNDE,
+      //   ],
+      // ];
+
+      // var lineArrow7NoSNDE = lineGeneratorSNDE(arrow7NoDataSNDE);
+
+      // var arrow7NoSNDE = svgSNDE
+      //   .append("path")
+      //   .attr("d", lineArrow7NoSNDE)
+      //   .attr("fill", "none")
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5)
+      //   .style("opacity", 1)
+      //   .attr("transform", "translate(" + col2EndSNDE + "," + row4MidSNDE + ")")
+      //   .attr("marker-end", "url(#arrowNoSNDE)");
+
+      // //---------------//
+      // // Simple Arrows //
+      // //---------------//
+
+      // var arrow0StartSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col1MidSNDE)
+      //   .attr("y1", row1SNDE - rowMarginSNDE)
+      //   .attr("x2", col1MidSNDE)
+      //   .attr("y2", row1SNDE - arrowMarginEndSNDE)
+      //   .attr("stroke", sand)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowStartSNDE)");
+
+      // var arrow1YesSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col1MidSNDE)
+      //   .attr("y1", row1EndSNDE)
+      //   .attr("x2", col1MidSNDE)
+      //   .attr("y2", row2SNDE - arrowMarginEndSNDE)
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowYesSNDE)");
+
+      // var arrow2YesSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col1MidSNDE)
+      //   .attr("y1", row2EndSNDE)
+      //   .attr("x2", col1MidSNDE)
+      //   .attr("y2", row3SNDE - arrowMarginEndSNDE)
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowYesSNDE)");
+
+      // var arrow2NoSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col1SNDE + arrowMarginStartSNDE)
+      //   .attr("y1", row2MidSNDE)
+      //   .attr("x2", col1SNDE - 0.5 * colMarginSNDE)
+      //   .attr("y2", row2MidSNDE)
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5);
+
+      // var arrow3NoSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col1SNDE + arrowMarginStartSNDE)
+      //   .attr("y1", row3MidSNDE)
+      //   .attr("x2", col1SNDE - 0.5 * colMarginSNDE)
+      //   .attr("y2", row3MidSNDE)
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5);
+
+      // var arrow4NoSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col2MidSNDE)
+      //   .attr("y1", row1EndSNDE)
+      //   .attr("x2", col2MidSNDE)
+      //   .attr("y2", row2SNDE - arrowMarginEndSNDE)
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowNoSNDE)");
+
+      // var arrow5NoSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col2MidSNDE)
+      //   .attr("y1", row2EndSNDE)
+      //   .attr("x2", col2MidSNDE)
+      //   .attr("y2", row3SNDE - arrowMarginEndSNDE)
+      //   .attr("stroke", rubin)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowNoSNDE)");
+
+      // var arrow5YesSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col2SNDE + arrowMarginStartSNDE)
+      //   .attr("y1", row2MidSNDE)
+      //   .attr("x2", col2SNDE - 0.5 * colMarginSNDE)
+      //   .attr("y2", row2MidSNDE)
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5);
+
+      // var arrow6YesSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col2MidSNDE)
+      //   .attr("y1", row3EndSNDE)
+      //   .attr("x2", col2MidSNDE)
+      //   .attr("y2", row4SNDE - arrowMarginEndSNDE)
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowYesSNDE)");
+
+      // var arrow7YesSNDE = svgSNDE
+      //   .append("line")
+      //   .attr("x1", col2MidSNDE)
+      //   .attr("y1", row4EndSNDE)
+      //   .attr("x2", col2MidSNDE)
+      //   .attr("y2", row5MidSNDE - arrowMarginEndSNDE)
+      //   .attr("stroke", jade)
+      //   .attr("stroke-width", 1.5)
+      //   .attr("marker-end", "url(#arrowYesSNDE)");
+
+      // //------------------------//
+      // // Blockchain-Type Labels //
+      // //------------------------//
+
+      // //only defined here for they are a layer above the arrows
+
+      // var writeTitleSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "labelShapesBCTypeSNDE")
+      //   .text("Daten schreiben")
+      //   .attr("x", col1EndSNDE + 0.5 * colMarginSNDE)
+      //   .attr("y", row5SNDE + rowMarginSNDE * 0.75)
+      //   .style("font-weight", 700);
+
+      // var writePermlessBackgroundSNDE = svgSNDE
+      //   .append("rect")
+      //   .attr("class", "EndpointSNDE")
+      //   .attr("x", col1SNDE + (rhombWidthSNDE - endPointWidthSNDE) / 2)
+      //   .attr("y", row5SNDE + rowMarginSNDE * 1.5 - textBackgroundHeight / 1.5)
+      //   .attr("width", endPointWidthSNDE)
+      //   .attr("height", textBackgroundHeight)
+      //   .attr("fill", sand);
+
+      // var writePermlessSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "labelShapesBCTypeSNDE")
+      //   .text("uneingeschränkt")
+      //   .attr("x", col1MidSNDE)
+      //   .attr("background-fill", sand)
+      //   .attr("y", row5SNDE + rowMarginSNDE * 1.5);
+
+      // var writePermBackgroundSNDE = svgSNDE
+      //   .append("rect")
+      //   .attr("class", "EndpointSNDE")
+      //   .attr("x", col2SNDE + (rhombWidthSNDE - endPointWidthSNDE) / 2)
+      //   .attr("y", row5SNDE + rowMarginSNDE * 1.5 - textBackgroundHeight / 1.5)
+      //   .attr("width", endPointWidthSNDE)
+      //   .attr("height", textBackgroundHeight)
+      //   .attr("fill", sand);
+
+      // var writeRermSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "labelShapesBCTypeSNDE")
+      //   .text("zugangsbeschränkt")
+      //   .attr("x", col2MidSNDE)
+      //   .attr("background-fill", sand)
+      //   .attr("y", row5SNDE + rowMarginSNDE * 1.5);
+
+      // var readTitleSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "labelShapesBCTypeSNDE")
+      //   .text("Daten lesen")
+      //   .attr("x", col0SNDE + colMarginSNDE * 0.75)
+      //   .attr("y", row6SNDE + rowMarginSNDE / 2)
+      //   .style("font-weight", 700)
+      //   .attr(
+      //     "transform",
+      //     "rotate(-90, " +
+      //       (col0SNDE + colMarginSNDE * 0.75) +
+      //       ", " +
+      //       (row6SNDE + rowMarginSNDE / 2 + ")")
+      //   );
+
+      // var readPublSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "labelShapesBCTypeSNDE")
+      //   .text("öffentlich")
+      //   .attr("x", col0SNDE + 1.25 * colMarginSNDE)
+      //   .attr("y", row5MidSNDE + endPointHeightSNDE / 2)
+      //   .attr(
+      //     "transform",
+      //     "rotate(-90, " +
+      //       (col0SNDE + 1.25 * colMarginSNDE) +
+      //       ", " +
+      //       (row5MidSNDE + endPointHeightSNDE / 2 + ")")
+      //   );
+
+      // var readPrivSNDE = svgSNDE
+      //   .append("text")
+      //   .attr("class", "labelShapesBCTypeSNDE")
+      //   .text("privat")
+      //   .attr("x", col0SNDE + 1.25 * colMarginSNDE)
+      //   .attr("y", row6SNDE + rowMarginSNDE + endPointHeightSNDE / 2)
+      //   .attr(
+      //     "transform",
+      //     "rotate(-90, " +
+      //       (col0SNDE + 1.25 * colMarginSNDE) +
+      //       ", " +
+      //       (row6SNDE + rowMarginSNDE + endPointHeightSNDE / 2 + ")")
+      //   );
+
+      //-------------//
+      // Hilfslinien //
+      //-------------//
+      
+      hCol0 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col0SNDE)
+              .attr("y2", row7EndSNDE);
+
+            hCol1 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col1SNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col1SNDE)
+              .attr("y2", row7EndSNDE);
+
+            hCol1Mid = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col1MidSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col1MidSNDE)
+              .attr("y2", row7EndSNDE);
+
+            hCol1End = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col1EndSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col1EndSNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol2 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col2SNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col2SNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol2Mid = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col2MidSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col2MidSNDE)
+              .attr("y2", row7EndSNDE);
+              
+              hCol2End = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col2EndSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col2EndSNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol3 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col3SNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col3SNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol3Mid = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col3MidSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col3MidSNDE)
+              .attr("y2", row7EndSNDE);
+              
+              hCol3End = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col3EndSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col3EndSNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol4 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col4SNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col4SNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol4Mid = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col4MidSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col4MidSNDE)
+              .attr("y2", row7EndSNDE);
+              
+              hCol4End = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col4EndSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col4EndSNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol5 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col5SNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col5SNDE)
+              .attr("y2", row7EndSNDE);
+
+              hCol5Mid = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col5MidSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col5MidSNDE)
+              .attr("y2", row7EndSNDE);
+              
+              hCol5End = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col5EndSNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row7EndSNDE);
+
+              hRow0 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row0SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row0SNDE);
+
+            hRowMid0 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row0MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row0MidSNDE);
+
+            hRowEnd0 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row0EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row0EndSNDE);
+
+            hRow1 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row1SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row1SNDE);
+
+            hRowMid1 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row1MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row1MidSNDE);
+
+            hRowEnd1 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row1EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row1EndSNDE);
+
+              hRow2 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row2SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row2SNDE);
+
+            hRowMid2 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row2MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row2MidSNDE);
+
+            hRowEnd2 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row2EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row2EndSNDE);
+
+              hRow3 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row3SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row3SNDE);
+
+            hRowMid3 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row3MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row3MidSNDE);
+
+            hRowEnd3 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row3EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row3EndSNDE);
+
+              hRow4 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row4SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row4SNDE);
+
+            hRowMid4 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row4MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row4MidSNDE);
+
+            hRowEnd4 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row4EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row4EndSNDE);
+
+              hRow5 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row5SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row5SNDE);
+
+            hRowMid5 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row5MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row5MidSNDE);
+
+            hRowEnd5 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row5EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row5EndSNDE);
+
+              hRow6 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row6SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row6SNDE);
+
+            hRowMid6 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row6MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row6MidSNDE);
+
+            hRowEnd6 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row6EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row6EndSNDE);
+
+              hRow7 = svgSNDE
+              .append("line")
+              .style("stroke", jade)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row7SNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row7SNDE);
+
+            hRowMid7 = svgSNDE
+              .append("line")
+              .style("stroke", rubin)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row7MidSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row7MidSNDE);
+
+            hRowEnd7 = svgSNDE
+              .append("line")
+              .style("stroke", amethyst)
+              .style("stroke-width", 0.25)
+              .attr("x1", col0SNDE)
+              .attr("y1", row7EndSNDE)
+              .attr("x2", col5EndSNDE)
+              .attr("y2", row7EndSNDE);
+
+    </script>
+  </body>
+</html>
