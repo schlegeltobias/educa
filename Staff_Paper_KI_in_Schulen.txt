@@ -1,0 +1,13 @@
+﻿topic;label;level;value
+Textgeneratoren;Textgeneratoren;Primarstufe;14.81481481
+Textgeneratoren;Textgeneratoren;Sekundarstufe;47.40740741
+Textgeneratoren;Textgeneratoren;Gymansium / FMS;71.11111111
+Textgeneratoren;Textgeneratoren;Berufsbildung;62.96296296
+Übersetzung;Übersetzung;Primarstufe;31.85185185
+Übersetzung;Übersetzung;Sekundarstufe;80
+Übersetzung;Übersetzung;Gymansium / FMS;84.44444444
+Übersetzung;Übersetzung;Berufsbildung; 67.4074074074074
+Bildgeneratoren;Bildgeneratoren;Primarstufe;7.407407407
+Bildgeneratoren;Bildgeneratoren;Sekundarstufe;26.66666667
+Bildgeneratoren;Bildgeneratoren;Gymansium / FMS;25.92592593
+Bildgeneratoren;Bildgeneratoren;Berufsbildung;26.66666667
